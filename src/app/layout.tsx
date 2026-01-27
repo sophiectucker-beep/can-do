@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Nunito, Caveat } from "next/font/google";
+import { Nunito } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
 const nunito = Nunito({
@@ -8,10 +9,10 @@ const nunito = Nunito({
   weight: ["200", "300", "400", "500"],
 });
 
-const caveat = Caveat({
+const hankyDemo = localFont({
+  src: "../fonts/hanky-demo.regular.otf",
   variable: "--font-logo",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -26,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${nunito.variable} ${caveat.variable} antialiased`} style={{ fontFamily: 'var(--font-nunito), sans-serif' }}>
+      <body className={`${nunito.variable} ${hankyDemo.variable} antialiased`} style={{ fontFamily: 'var(--font-nunito), sans-serif' }}>
         {children}
       </body>
     </html>
