@@ -9,9 +9,38 @@ const redis = new Redis({
 
 const EVENT_PREFIX = 'event:';
 
+// Generate a short, readable ID like "2h6jk"
+function generateShortId(length: number = 5): string {
+  // Use lowercase letters and numbers, excluding confusing characters (0, o, l, 1)
+  const chars = 'abcdefghjkmnpqrstuvwxyz23456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
+// Generate a unique short ID (check for collisions)
+async function generateUniqueShortId(): Promise<string> {
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const id = generateShortId();
+    const exists = await redis.exists(`${EVENT_PREFIX}${id}`);
+    if (!exists) {
+      return id;
+    }
+  }
+  // Fallback to longer ID if we keep getting collisions
+  return generateShortId(8);
+}
+
 export async function createEvent(title: string, creatorName: string): Promise<CalendarEvent> {
+  const eventId = await generateUniqueShortId();
+
+  // Calculate expiry: 3 months from now (in seconds)
+  const threeMonthsInSeconds = 90 * 24 * 60 * 60;
+
   const newEvent: CalendarEvent = {
-    id: uuidv4(),
+    id: eventId,
     title,
     creatorName,
     participants: [{
@@ -23,7 +52,11 @@ export async function createEvent(title: string, creatorName: string): Promise<C
     createdAt: new Date().toISOString(),
   };
 
-  await redis.set(`${EVENT_PREFIX}${newEvent.id}`, JSON.stringify(newEvent));
+  // Store with 3 month expiry
+  await redis.set(`${EVENT_PREFIX}${newEvent.id}`, JSON.stringify(newEvent), {
+    ex: threeMonthsInSeconds,
+  });
+
   return newEvent;
 }
 
@@ -61,8 +94,11 @@ export async function updateParticipantDates(
       });
     }
 
-    // Save with the updated data
-    await redis.set(`${EVENT_PREFIX}${eventId}`, JSON.stringify(event));
+    // Save with the updated data (refresh the 3 month expiry)
+    const threeMonthsInSeconds = 90 * 24 * 60 * 60;
+    await redis.set(`${EVENT_PREFIX}${eventId}`, JSON.stringify(event), {
+      ex: threeMonthsInSeconds,
+    });
 
     // Verify the save worked by reading back
     const verified = await getEvent(eventId);

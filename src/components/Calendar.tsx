@@ -8,10 +8,11 @@ import {
   eachDayOfInterval,
   isSameMonth,
   isSameDay,
-  addMonths,
-  subMonths,
+  setMonth,
+  setYear,
   startOfWeek,
   endOfWeek,
+  addYears,
 } from 'date-fns';
 
 interface CalendarProps {
@@ -19,15 +20,28 @@ interface CalendarProps {
   onDateToggle: (date: string) => void;
   matchingDates?: string[];
   participantSelections?: Record<string, string[]>;
+  currentUserName?: string;
 }
+
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
 
 export default function Calendar({
   selectedDates,
   onDateToggle,
   matchingDates = [],
   participantSelections = {},
+  currentUserName = '',
 }: CalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [showYearPicker, setShowYearPicker] = useState(false);
+  const [showMonthPicker, setShowMonthPicker] = useState(false);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 6 }, (_, i) => currentYear + i); // Current year + 5 years
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
@@ -43,32 +57,73 @@ export default function Calendar({
   const isMatching = (day: Date) =>
     matchingDates.some(d => isSameDay(new Date(d), day));
 
-  const getSelectionCount = (day: Date) => {
+  const getSelectionInfo = (day: Date) => {
     const dateStr = format(day, 'yyyy-MM-dd');
-    let count = 0;
-    Object.values(participantSelections).forEach(dates => {
-      if (dates.includes(dateStr)) count++;
+    const voters: string[] = [];
+    Object.entries(participantSelections).forEach(([name, dates]) => {
+      if (dates.includes(dateStr)) {
+        voters.push(name);
+      }
     });
-    return count;
+    return voters;
+  };
+
+  const handleYearSelect = (year: number) => {
+    setSelectedYear(year);
+    setShowYearPicker(false);
+    setShowMonthPicker(true);
+  };
+
+  const handleMonthSelect = (monthIndex: number) => {
+    const newDate = setYear(setMonth(new Date(), monthIndex), selectedYear);
+    setCurrentMonth(newDate);
+    setShowMonthPicker(false);
+  };
+
+  const goToPrevMonth = () => {
+    const newDate = new Date(currentMonth);
+    newDate.setMonth(newDate.getMonth() - 1);
+    // Don't go before current month
+    if (newDate >= startOfMonth(new Date())) {
+      setCurrentMonth(newDate);
+    }
+  };
+
+  const goToNextMonth = () => {
+    const newDate = new Date(currentMonth);
+    newDate.setMonth(newDate.getMonth() + 1);
+    // Don't go more than 5 years ahead
+    const maxDate = addYears(new Date(), 5);
+    if (newDate <= maxDate) {
+      setCurrentMonth(newDate);
+    }
   };
 
   return (
     <div className="w-full max-w-md mx-auto">
-      {/* Month Navigation */}
+      {/* Month/Year Navigation */}
       <div className="flex items-center justify-between mb-6 px-2">
         <button
-          onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
+          onClick={goToPrevMonth}
           className="p-2 hover:bg-[var(--pastel-pink)] transition-colors rounded-full"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <h2 className="text-xl font-light tracking-wide text-[var(--foreground)]">
-          {format(currentMonth, 'MMMM yyyy')}
-        </h2>
+
         <button
-          onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+          onClick={() => {
+            setSelectedYear(currentMonth.getFullYear());
+            setShowYearPicker(true);
+          }}
+          className="text-xl font-light tracking-wide text-[var(--foreground)] hover:text-[var(--accent)] transition-colors"
+        >
+          {format(currentMonth, 'MMMM yyyy')}
+        </button>
+
+        <button
+          onClick={goToNextMonth}
           className="p-2 hover:bg-[var(--pastel-pink)] transition-colors rounded-full"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -76,6 +131,76 @@ export default function Calendar({
           </svg>
         </button>
       </div>
+
+      {/* Year Picker Modal */}
+      {showYearPicker && (
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-xs w-full shadow-lg">
+            <h3 className="text-lg font-light text-center mb-4 text-[var(--foreground)]">
+              Select Year
+            </h3>
+            <div className="grid grid-cols-2 gap-2">
+              {years.map(year => (
+                <button
+                  key={year}
+                  onClick={() => handleYearSelect(year)}
+                  className={`px-4 py-3 rounded-xl font-light transition-colors
+                    ${year === currentMonth.getFullYear()
+                      ? 'bg-[var(--accent)] text-white'
+                      : 'bg-[var(--pastel-pink)] hover:bg-[var(--accent)] hover:text-white'
+                    }`}
+                >
+                  {year}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => setShowYearPicker(false)}
+              className="w-full mt-4 px-4 py-2 text-[var(--text-light)] font-light"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Month Picker Modal */}
+      {showMonthPicker && (
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-xs w-full shadow-lg">
+            <h3 className="text-lg font-light text-center mb-4 text-[var(--foreground)]">
+              Select Month - {selectedYear}
+            </h3>
+            <div className="grid grid-cols-3 gap-2">
+              {MONTHS.map((month, index) => {
+                const isDisabled = selectedYear === currentYear && index < new Date().getMonth();
+                return (
+                  <button
+                    key={month}
+                    onClick={() => !isDisabled && handleMonthSelect(index)}
+                    disabled={isDisabled}
+                    className={`px-2 py-3 rounded-xl font-light text-sm transition-colors
+                      ${isDisabled
+                        ? 'opacity-30 cursor-not-allowed bg-gray-100'
+                        : index === currentMonth.getMonth() && selectedYear === currentMonth.getFullYear()
+                          ? 'bg-[var(--accent)] text-white'
+                          : 'bg-[var(--pastel-blue)] hover:bg-[var(--accent)] hover:text-white'
+                      }`}
+                  >
+                    {month.slice(0, 3)}
+                  </button>
+                );
+              })}
+            </div>
+            <button
+              onClick={() => setShowMonthPicker(false)}
+              className="w-full mt-4 px-4 py-2 text-[var(--text-light)] font-light"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Weekday Headers */}
       <div className="grid grid-cols-7 gap-1 mb-2">
@@ -96,7 +221,8 @@ export default function Calendar({
           const selected = isSelected(day);
           const matching = isMatching(day);
           const inCurrentMonth = isSameMonth(day, currentMonth);
-          const selectionCount = getSelectionCount(day);
+          const voters = getSelectionInfo(day);
+          const selectionCount = voters.length;
 
           return (
             <button
@@ -107,15 +233,19 @@ export default function Calendar({
                 calendar-day aspect-square flex flex-col items-center justify-center
                 text-sm font-light transition-all duration-200 relative
                 ${!inCurrentMonth ? 'opacity-30 cursor-default' : 'cursor-pointer hover:scale-105'}
-                ${matching
-                  ? 'bg-[var(--pastel-green)] text-[var(--foreground)] shadow-sm'
-                  : selected
-                    ? 'bg-[var(--pastel-pink)] text-[var(--foreground)] shadow-sm'
-                    : 'bg-white/50 hover:bg-[var(--pastel-yellow)]'
+                ${selected
+                  ? matching
+                    ? 'bg-[var(--pastel-green)] text-[var(--foreground)] shadow-md ring-2 ring-[var(--accent)]'
+                    : 'bg-[var(--pastel-pink)] text-[var(--foreground)] shadow-md ring-2 ring-[var(--accent)]'
+                  : matching
+                    ? 'bg-[var(--pastel-green)] text-[var(--foreground)] shadow-sm'
+                    : selectionCount > 0
+                      ? 'bg-[var(--pastel-yellow)] text-[var(--foreground)]'
+                      : 'bg-white/50 hover:bg-[var(--pastel-yellow)]'
                 }
               `}
             >
-              <span>{format(day, 'd')}</span>
+              <span className={selected ? 'font-medium' : ''}>{format(day, 'd')}</span>
               {selectionCount > 0 && inCurrentMonth && (
                 <span className="text-[10px] text-[var(--text-light)] mt-0.5">
                   {selectionCount} {selectionCount === 1 ? 'vote' : 'votes'}
@@ -124,6 +254,22 @@ export default function Calendar({
             </button>
           );
         })}
+      </div>
+
+      {/* Legend */}
+      <div className="mt-4 flex flex-wrap justify-center gap-3 text-xs text-[var(--text-light)]">
+        <div className="flex items-center gap-1">
+          <span className="w-3 h-3 rounded bg-[var(--pastel-pink)] ring-2 ring-[var(--accent)]"></span>
+          <span>Your selection</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <span className="w-3 h-3 rounded bg-[var(--pastel-yellow)]"></span>
+          <span>Others voted</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <span className="w-3 h-3 rounded bg-[var(--pastel-green)]"></span>
+          <span>2+ match</span>
+        </div>
       </div>
     </div>
   );
