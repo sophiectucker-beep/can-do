@@ -39,26 +39,48 @@ export async function updateParticipantDates(
   name: string,
   dates: string[]
 ): Promise<CalendarEvent | null> {
-  const event = await getEvent(eventId);
-  if (!event) return null;
+  // Retry up to 3 times in case of concurrent updates
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const event = await getEvent(eventId);
+    if (!event) return null;
 
-  let participant = event.participants.find(p => p.id === visitorId);
+    // Find or create participant
+    const existingIndex = event.participants.findIndex(p => p.id === visitorId);
 
-  if (!participant) {
-    participant = {
-      id: visitorId,
-      name,
-      selectedDates: dates,
-      isCreator: false,
-    };
-    event.participants.push(participant);
-  } else {
-    participant.name = name;
-    participant.selectedDates = dates;
+    if (existingIndex >= 0) {
+      // Update existing participant
+      event.participants[existingIndex].name = name;
+      event.participants[existingIndex].selectedDates = dates;
+    } else {
+      // Add new participant
+      event.participants.push({
+        id: visitorId,
+        name,
+        selectedDates: dates,
+        isCreator: false,
+      });
+    }
+
+    // Save with the updated data
+    await redis.set(`${EVENT_PREFIX}${eventId}`, JSON.stringify(event));
+
+    // Verify the save worked by reading back
+    const verified = await getEvent(eventId);
+    if (verified) {
+      const savedParticipant = verified.participants.find(p => p.id === visitorId);
+      if (savedParticipant &&
+          savedParticipant.name === name &&
+          JSON.stringify(savedParticipant.selectedDates.sort()) === JSON.stringify(dates.sort())) {
+        return verified;
+      }
+    }
+
+    // If verification failed, wait a bit and retry
+    await new Promise(resolve => setTimeout(resolve, 100 * (attempt + 1)));
   }
 
-  await redis.set(`${EVENT_PREFIX}${eventId}`, JSON.stringify(event));
-  return event;
+  // Final attempt - just return whatever we have
+  return await getEvent(eventId);
 }
 
 export function getMatchingDates(event: CalendarEvent): string[] {
