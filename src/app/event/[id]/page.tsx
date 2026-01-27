@@ -33,6 +33,7 @@ export default function EventPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [showNamePrompt, setShowNamePrompt] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   // Get or create visitor ID on mount
   useEffect(() => {
@@ -54,11 +55,11 @@ export default function EventPage() {
         const data = await response.json();
         setEvent(data);
 
-        // Set user's selected dates and name if they exist
+        // Set user's selected dates and name if they exist (only if no unsaved changes)
         const participant = data.participants.find(
           (p: Participant) => p.id === visitorId
         );
-        if (participant) {
+        if (participant && !hasUnsavedChanges) {
           setSelectedDates(participant.selectedDates);
           setUserName(participant.name);
           setShowNamePrompt(false);
@@ -69,7 +70,7 @@ export default function EventPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [eventId, visitorId]);
+  }, [eventId, visitorId, hasUnsavedChanges]);
 
   useEffect(() => {
     if (visitorId) {
@@ -81,6 +82,7 @@ export default function EventPage() {
   }, [fetchEvent, visitorId]);
 
   const handleDateToggle = (dateStr: string) => {
+    setHasUnsavedChanges(true);
     setSelectedDates(prev =>
       prev.includes(dateStr)
         ? prev.filter(d => d !== dateStr)
@@ -113,6 +115,7 @@ export default function EventPage() {
         const data = await response.json();
         setEvent(data);
         setShowNamePrompt(false);
+        setHasUnsavedChanges(false);
       }
     } catch (error) {
       console.error('Error saving dates:', error);
