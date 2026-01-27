@@ -1,8 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fef7f7;
+  --foreground: #4a4a4a;
+  --pastel-pink: #ffd4d4;
+  --pastel-blue: #d4e5ff;
+  --pastel-green: #d4ffd4;
+  --pastel-purple: #e8d4ff;
+  --pastel-yellow: #fff8d4;
+  --pastel-mint: #d4fff0;
+  --accent: #ffb8b8;
+  --accent-hover: #ffa0a0;
+  --success: #a8e6a8;
+  --text-light: #7a7a7a;
 }
 
 @theme inline {
@@ -12,15 +22,31 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Nunito', 'Segoe UI', sans-serif;
+  font-weight: 300;
+}
+
+* {
+  border-radius: inherit;
+}
+
+button, input, .card {
+  border-radius: 16px;
+}
+
+.calendar-day {
+  border-radius: 12px;
+}
+
+h1, h2, h3 {
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+
+input::placeholder {
+  color: var(--text-light);
+  font-weight: 200;
 }
