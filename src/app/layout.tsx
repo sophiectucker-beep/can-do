@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Nunito, Quicksand } from "next/font/google";
+import { Nunito, Caveat } from "next/font/google";
 import "./globals.css";
 
 const nunito = Nunito({
@@ -8,14 +8,14 @@ const nunito = Nunito({
   weight: ["200", "300", "400", "500"],
 });
 
-const quicksand = Quicksand({
+const caveat = Caveat({
   variable: "--font-logo",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "can do - find the perfect date together",
+  title: "Can Do - find the perfect date together",
   description: "Create a shared calendar and find dates that work for everyone",
 };
 
@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${nunito.variable} ${quicksand.variable} antialiased`} style={{ fontFamily: 'var(--font-nunito), sans-serif' }}>
+      <body className={`${nunito.variable} ${caveat.variable} antialiased`} style={{ fontFamily: 'var(--font-nunito), sans-serif' }}>
         {children}
       </body>
     </html>

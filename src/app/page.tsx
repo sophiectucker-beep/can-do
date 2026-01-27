@@ -40,10 +40,10 @@ export default function Home() {
       <div className="w-full max-w-md text-center">
         {/* Logo */}
         <h1
-          className="text-5xl font-semibold tracking-wide mb-2 text-[var(--accent)]"
+          className="text-6xl font-bold mb-2 text-[var(--accent)]"
           style={{ fontFamily: 'var(--font-logo), sans-serif' }}
         >
-          can do
+          Can Do
         </h1>
         <p className="text-[var(--text-light)] font-light mb-12">
           find the perfect date together

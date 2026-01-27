@@ -160,10 +160,10 @@ export default function EventPage() {
         <div className="text-center mb-8">
           <a
             href="/"
-            className="text-2xl font-semibold tracking-wide text-[var(--accent)] hover:opacity-80 transition-opacity"
+            className="text-3xl font-bold text-[var(--accent)] hover:opacity-80 transition-opacity"
             style={{ fontFamily: 'var(--font-logo), sans-serif' }}
           >
-            can do
+            Can Do
           </a>
         </div>
 
