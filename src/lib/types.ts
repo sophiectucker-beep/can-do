@@ -1,7 +1,6 @@
 export interface Participant {
   id: string;
-  email: string;
-  name?: string;
+  name: string;
   selectedDates: string[]; // ISO date strings
   isCreator: boolean;
 }
@@ -9,8 +8,7 @@ export interface Participant {
 export interface CalendarEvent {
   id: string;
   title: string;
-  creatorEmail: string;
+  creatorName: string;
   participants: Participant[];
-  invitedEmails: string[];
   createdAt: string;
 }

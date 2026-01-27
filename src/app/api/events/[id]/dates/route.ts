@@ -7,16 +7,16 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    const { email, dates } = await request.json();
+    const { visitorId, name, dates } = await request.json();
 
-    if (!email || !Array.isArray(dates)) {
+    if (!visitorId || !name || !Array.isArray(dates)) {
       return NextResponse.json(
-        { error: 'Email and dates array are required' },
+        { error: 'Visitor ID, name, and dates array are required' },
         { status: 400 }
       );
     }
 
-    const event = await updateParticipantDates(id, email, dates);
+    const event = await updateParticipantDates(id, visitorId, name, dates);
 
     if (!event) {
       return NextResponse.json({ error: 'Event not found' }, { status: 404 });

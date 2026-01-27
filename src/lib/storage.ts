@@ -9,18 +9,17 @@ const redis = new Redis({
 
 const EVENT_PREFIX = 'event:';
 
-export async function createEvent(title: string, creatorEmail: string): Promise<CalendarEvent> {
+export async function createEvent(title: string, creatorName: string): Promise<CalendarEvent> {
   const newEvent: CalendarEvent = {
     id: uuidv4(),
     title,
-    creatorEmail,
+    creatorName,
     participants: [{
       id: uuidv4(),
-      email: creatorEmail,
+      name: creatorName,
       selectedDates: [],
       isCreator: true,
     }],
-    invitedEmails: [],
     createdAt: new Date().toISOString(),
   };
 
@@ -34,80 +33,31 @@ export async function getEvent(id: string): Promise<CalendarEvent | null> {
   return typeof data === 'string' ? JSON.parse(data) : data;
 }
 
-export async function updateEventTitle(
-  id: string,
-  title: string,
-  requestorEmail: string
-): Promise<CalendarEvent | null> {
-  const event = await getEvent(id);
-  if (!event) return null;
-  if (event.creatorEmail !== requestorEmail) return null;
-
-  event.title = title;
-  await redis.set(`${EVENT_PREFIX}${id}`, JSON.stringify(event));
-  return event;
-}
-
-export async function addParticipant(
-  eventId: string,
-  email: string
-): Promise<CalendarEvent | null> {
-  const event = await getEvent(eventId);
-  if (!event) return null;
-
-  const existingParticipant = event.participants.find(p => p.email === email);
-
-  if (!existingParticipant) {
-    event.participants.push({
-      id: uuidv4(),
-      email,
-      selectedDates: [],
-      isCreator: false,
-    });
-    await redis.set(`${EVENT_PREFIX}${eventId}`, JSON.stringify(event));
-  }
-
-  return event;
-}
-
 export async function updateParticipantDates(
   eventId: string,
-  email: string,
+  visitorId: string,
+  name: string,
   dates: string[]
 ): Promise<CalendarEvent | null> {
   const event = await getEvent(eventId);
   if (!event) return null;
 
-  let participant = event.participants.find(p => p.email === email);
+  let participant = event.participants.find(p => p.id === visitorId);
 
   if (!participant) {
     participant = {
-      id: uuidv4(),
-      email,
+      id: visitorId,
+      name,
       selectedDates: dates,
       isCreator: false,
     };
     event.participants.push(participant);
   } else {
+    participant.name = name;
     participant.selectedDates = dates;
   }
 
   await redis.set(`${EVENT_PREFIX}${eventId}`, JSON.stringify(event));
-  return event;
-}
-
-export async function addInvitedEmail(
-  eventId: string,
-  email: string
-): Promise<CalendarEvent | null> {
-  const event = await getEvent(eventId);
-  if (!event) return null;
-
-  if (!event.invitedEmails.includes(email)) {
-    event.invitedEmails.push(email);
-    await redis.set(`${EVENT_PREFIX}${eventId}`, JSON.stringify(event));
-  }
-
   return event;
 }
 

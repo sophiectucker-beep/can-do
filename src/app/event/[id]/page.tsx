@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Calendar from '@/components/Calendar';
 import { format } from 'date-fns';
+import { v4 as uuidv4 } from 'uuid';
 
 interface Participant {
   id: string;
-  email: string;
+  name: string;
   selectedDates: string[];
   isCreator: boolean;
 }
@@ -15,26 +16,36 @@ interface Participant {
 interface EventData {
   id: string;
   title: string;
-  creatorEmail: string;
+  creatorName: string;
   participants: Participant[];
-  invitedEmails: string[];
   matchingDates: string[];
 }
 
 export default function EventPage() {
   const params = useParams();
-  const searchParams = useSearchParams();
   const eventId = params.id as string;
-  const userEmail = searchParams.get('email') || '';
 
   const [event, setEvent] = useState<EventData | null>(null);
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
-  const [inviteEmail, setInviteEmail] = useState('');
-  const [shareLink, setShareLink] = useState('');
+  const [userName, setUserName] = useState('');
+  const [visitorId, setVisitorId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [showNamePrompt, setShowNamePrompt] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-  const isCreator = event?.creatorEmail === userEmail;
+  // Get or create visitor ID on mount
+  useEffect(() => {
+    const storedId = localStorage.getItem(`can-do-${eventId}`);
+    if (storedId) {
+      setVisitorId(storedId);
+    } else {
+      // New visitor - show name prompt
+      const newId = uuidv4();
+      setVisitorId(newId);
+      setShowNamePrompt(true);
+    }
+  }, [eventId]);
 
   const fetchEvent = useCallback(async () => {
     try {
@@ -43,12 +54,14 @@ export default function EventPage() {
         const data = await response.json();
         setEvent(data);
 
-        // Set user's selected dates if they exist
+        // Set user's selected dates and name if they exist
         const participant = data.participants.find(
-          (p: Participant) => p.email === userEmail
+          (p: Participant) => p.id === visitorId
         );
         if (participant) {
           setSelectedDates(participant.selectedDates);
+          setUserName(participant.name);
+          setShowNamePrompt(false);
         }
       }
     } catch (error) {
@@ -56,15 +69,16 @@ export default function EventPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [eventId, userEmail]);
+  }, [eventId, visitorId]);
 
   useEffect(() => {
-    fetchEvent();
-
-    // Poll for updates every 5 seconds
-    const interval = setInterval(fetchEvent, 5000);
-    return () => clearInterval(interval);
-  }, [fetchEvent]);
+    if (visitorId) {
+      fetchEvent();
+      // Poll for updates every 5 seconds
+      const interval = setInterval(fetchEvent, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [fetchEvent, visitorId]);
 
   const handleDateToggle = (dateStr: string) => {
     setSelectedDates(prev =>
@@ -75,19 +89,30 @@ export default function EventPage() {
   };
 
   const saveDates = async () => {
-    if (!userEmail) return;
+    if (!userName.trim()) {
+      setShowNamePrompt(true);
+      return;
+    }
 
     setIsSaving(true);
     try {
+      // Store visitorId in localStorage
+      localStorage.setItem(`can-do-${eventId}`, visitorId);
+
       const response = await fetch(`/api/events/${eventId}/dates`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userEmail, dates: selectedDates }),
+        body: JSON.stringify({
+          visitorId,
+          name: userName.trim(),
+          dates: selectedDates
+        }),
       });
 
       if (response.ok) {
         const data = await response.json();
         setEvent(data);
+        setShowNamePrompt(false);
       }
     } catch (error) {
       console.error('Error saving dates:', error);
@@ -96,36 +121,17 @@ export default function EventPage() {
     }
   };
 
-  const handleInvite = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inviteEmail.trim()) return;
-
-    try {
-      const response = await fetch(`/api/events/${eventId}/invite`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: inviteEmail.trim() }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setShareLink(data.shareUrl);
-        setInviteEmail('');
-        fetchEvent();
-      }
-    } catch (error) {
-      console.error('Error inviting:', error);
-    }
-  };
-
   const copyShareLink = () => {
-    navigator.clipboard.writeText(shareLink);
+    const url = window.location.href.split('?')[0]; // Remove any query params
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   // Get participant selections for calendar display
   const participantSelections: Record<string, string[]> = {};
   event?.participants.forEach(p => {
-    participantSelections[p.email] = p.selectedDates;
+    participantSelections[p.name] = p.selectedDates;
   });
 
   if (isLoading) {
@@ -160,12 +166,44 @@ export default function EventPage() {
             {event.title}
           </h1>
           <p className="text-sm text-[var(--text-light)] font-light">
-            {isCreator ? 'You created this event' : `Created by ${event.creatorEmail}`}
-          </p>
-          <p className="text-xs text-[var(--text-light)] font-light mt-1">
-            Logged in as: {userEmail}
+            Created by {event.creatorName}
           </p>
         </div>
+
+        {/* Name Prompt Modal */}
+        {showNamePrompt && (
+          <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl p-8 max-w-sm w-full shadow-lg">
+              <h2 className="text-xl font-light text-center mb-4 text-[var(--foreground)]">
+                What&apos;s your name?
+              </h2>
+              <input
+                type="text"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                placeholder="Enter your name"
+                autoFocus
+                className="w-full px-4 py-3 bg-white border border-[var(--pastel-pink)]
+                           focus:border-[var(--accent)] focus:outline-none
+                           text-center font-light rounded-xl mb-4"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && userName.trim()) {
+                    setShowNamePrompt(false);
+                  }
+                }}
+              />
+              <button
+                onClick={() => userName.trim() && setShowNamePrompt(false)}
+                disabled={!userName.trim()}
+                className="w-full px-4 py-3 bg-[var(--accent)] hover:bg-[var(--accent-hover)]
+                           text-white font-light tracking-wide transition-colors rounded-xl
+                           disabled:opacity-50"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Calendar Section */}
@@ -180,10 +218,24 @@ export default function EventPage() {
                 matchingDates={event.matchingDates}
                 participantSelections={participantSelections}
               />
+
+              {/* Name input */}
+              <div className="mt-4">
+                <input
+                  type="text"
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                  placeholder="Your name"
+                  className="w-full px-4 py-3 bg-white border border-[var(--pastel-pink)]
+                             focus:border-[var(--accent)] focus:outline-none
+                             text-center font-light rounded-xl"
+                />
+              </div>
+
               <button
                 onClick={saveDates}
-                disabled={isSaving}
-                className="w-full mt-6 px-6 py-3 bg-[var(--accent)] hover:bg-[var(--accent-hover)]
+                disabled={isSaving || !userName.trim()}
+                className="w-full mt-4 px-6 py-3 bg-[var(--accent)] hover:bg-[var(--accent-hover)]
                            text-white font-light tracking-wide transition-colors
                            disabled:opacity-50 rounded-xl"
               >
@@ -191,64 +243,22 @@ export default function EventPage() {
               </button>
             </div>
 
-            {/* Invite Section - Only for creator */}
-            {isCreator && (
-              <div className="bg-white/60 p-6 rounded-2xl shadow-sm mt-6">
-                <h2 className="text-lg font-light text-center mb-4 text-[var(--foreground)]">
-                  Invite Friends
-                </h2>
-                <form onSubmit={handleInvite} className="space-y-4">
-                  <input
-                    type="email"
-                    value={inviteEmail}
-                    onChange={(e) => setInviteEmail(e.target.value)}
-                    placeholder="Enter friend's email"
-                    className="w-full px-4 py-3 bg-white border border-[var(--pastel-pink)]
-                               focus:border-[var(--accent)] focus:outline-none
-                               text-center font-light rounded-xl"
-                  />
-                  <button
-                    type="submit"
-                    className="w-full px-4 py-3 bg-[var(--pastel-purple)] hover:bg-[var(--pastel-blue)]
-                               text-[var(--foreground)] font-light tracking-wide transition-colors rounded-xl"
-                  >
-                    Generate Invite Link
-                  </button>
-                </form>
-
-                {shareLink && (
-                  <div className="mt-4 p-4 bg-[var(--pastel-mint)] rounded-xl">
-                    <p className="text-xs font-light text-[var(--foreground)] mb-2 text-center">
-                      Share this link:
-                    </p>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={shareLink}
-                        readOnly
-                        className="flex-1 px-3 py-2 bg-white text-xs font-light rounded-lg"
-                      />
-                      <button
-                        onClick={copyShareLink}
-                        className="px-4 py-2 bg-[var(--accent)] text-white text-xs rounded-lg
-                                   hover:bg-[var(--accent-hover)] transition-colors"
-                      >
-                        Copy
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Invited People */}
-                {event.invitedEmails.length > 0 && (
-                  <div className="mt-4">
-                    <p className="text-xs font-light text-[var(--text-light)] mb-2">
-                      Invited: {event.invitedEmails.join(', ')}
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
+            {/* Share Link Section */}
+            <div className="bg-white/60 p-6 rounded-2xl shadow-sm mt-6">
+              <h2 className="text-lg font-light text-center mb-4 text-[var(--foreground)]">
+                Share with Friends
+              </h2>
+              <p className="text-sm text-[var(--text-light)] font-light text-center mb-4">
+                Copy this link and send it to your friends
+              </p>
+              <button
+                onClick={copyShareLink}
+                className="w-full px-4 py-3 bg-[var(--pastel-purple)] hover:bg-[var(--pastel-blue)]
+                           text-[var(--foreground)] font-light tracking-wide transition-colors rounded-xl"
+              >
+                {copied ? 'Copied!' : 'Copy Link'}
+              </button>
+            </div>
           </div>
 
           {/* Matching Dates Section */}
@@ -274,7 +284,7 @@ export default function EventPage() {
                 <p className="text-sm text-[var(--text-light)] font-light text-center">
                   No matching dates yet.
                   {event.participants.length < 2
-                    ? ' Invite friends to find common availability!'
+                    ? ' Share the link with friends!'
                     : ' Select more dates to find overlap!'}
                 </p>
               )}
@@ -293,7 +303,8 @@ export default function EventPage() {
                       <span className={`w-2 h-2 rounded-full ${
                         p.selectedDates.length > 0 ? 'bg-[var(--success)]' : 'bg-[var(--pastel-pink)]'
                       }`} />
-                      {p.email} {p.isCreator && '(creator)'}
+                      {p.name} {p.isCreator && '(creator)'}
+                      {p.id === visitorId && ' (you)'}
                       <span className="text-[var(--text-light)]">
                         ({p.selectedDates.length} dates)
                       </span>
