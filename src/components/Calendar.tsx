@@ -13,6 +13,8 @@ import {
   startOfWeek,
   endOfWeek,
   addYears,
+  isBefore,
+  startOfDay,
 } from 'date-fns';
 
 interface CalendarProps {
@@ -221,32 +223,37 @@ export default function Calendar({
           const selected = isSelected(day);
           const matching = isMatching(day);
           const inCurrentMonth = isSameMonth(day, currentMonth);
+          const isPast = isBefore(day, startOfDay(new Date()));
           const voters = getSelectionInfo(day);
           const selectionCount = voters.length;
+          const isDisabled = !inCurrentMonth || isPast;
+          const tooltipText = voters.length > 0 ? voters.join(', ') : '';
 
           return (
             <button
               key={dateStr}
-              onClick={() => onDateToggle(dateStr)}
-              disabled={!inCurrentMonth}
+              onClick={() => !isDisabled && onDateToggle(dateStr)}
+              disabled={isDisabled}
+              title={tooltipText}
               className={`
                 calendar-day aspect-square flex flex-col items-center justify-center
                 text-sm font-light transition-all duration-200 relative
-                ${!inCurrentMonth ? 'opacity-30 cursor-default' : 'cursor-pointer hover:scale-105'}
-                ${selected
+                ${isDisabled ? 'opacity-30 cursor-default' : 'cursor-pointer hover:scale-105'}
+                ${isPast && inCurrentMonth ? 'bg-gray-100' : ''}
+                ${!isPast && selected
                   ? matching
                     ? 'bg-[var(--pastel-green)] text-[var(--foreground)] shadow-md ring-2 ring-[var(--accent)]'
                     : 'bg-[var(--pastel-pink)] text-[var(--foreground)] shadow-md ring-2 ring-[var(--accent)]'
-                  : matching
+                  : !isPast && matching
                     ? 'bg-[var(--pastel-green)] text-[var(--foreground)] shadow-sm'
-                    : selectionCount > 0
+                    : !isPast && selectionCount > 0
                       ? 'bg-[var(--pastel-yellow)] text-[var(--foreground)]'
-                      : 'bg-white/50 hover:bg-[var(--pastel-yellow)]'
+                      : !isPast ? 'bg-white/50 hover:bg-[var(--pastel-yellow)]' : ''
                 }
               `}
             >
-              <span className={selected ? 'font-medium' : ''}>{format(day, 'd')}</span>
-              {selectionCount > 0 && inCurrentMonth && (
+              <span className={selected && !isPast ? 'font-medium' : ''}>{format(day, 'd')}</span>
+              {selectionCount > 0 && inCurrentMonth && !isPast && (
                 <span className="text-[10px] text-[var(--text-light)] mt-0.5">
                   {selectionCount} {selectionCount === 1 ? 'vote' : 'votes'}
                 </span>
@@ -268,7 +275,7 @@ export default function Calendar({
         </div>
         <div className="flex items-center gap-1">
           <span className="w-3 h-3 rounded bg-[var(--pastel-green)]"></span>
-          <span>2+ match</span>
+          <span>Everyone can do</span>
         </div>
       </div>
     </div>

@@ -123,6 +123,7 @@ export function getMatchingDates(event: CalendarEvent): string[] {
   if (event.participants.length < 2) return [];
 
   const dateCounts: Record<string, number> = {};
+  const totalParticipants = event.participants.length;
 
   event.participants.forEach(participant => {
     participant.selectedDates.forEach(date => {
@@ -130,8 +131,9 @@ export function getMatchingDates(event: CalendarEvent): string[] {
     });
   });
 
+  // Only return dates where ALL participants have selected
   return Object.entries(dateCounts)
-    .filter(([, count]) => count >= 2)
+    .filter(([, count]) => count === totalParticipants)
     .map(([date]) => date)
     .sort();
 }
