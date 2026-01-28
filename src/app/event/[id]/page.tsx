@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Calendar from '@/components/Calendar';
 import { format } from 'date-fns';
@@ -34,6 +34,7 @@ export default function EventPage() {
   const [showNamePrompt, setShowNamePrompt] = useState(false);
   const [copied, setCopied] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const weCanDoRef = useRef<HTMLDivElement>(null);
 
   // Get or create visitor ID on mount
   useEffect(() => {
@@ -116,6 +117,13 @@ export default function EventPage() {
         setEvent(data);
         setShowNamePrompt(false);
         setHasUnsavedChanges(false);
+
+        // On mobile, scroll to "We can do" section after saving
+        if (window.innerWidth < 1024 && weCanDoRef.current) {
+          setTimeout(() => {
+            weCanDoRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 100);
+        }
       }
     } catch (error) {
       console.error('Error saving dates:', error);
@@ -248,28 +256,20 @@ export default function EventPage() {
               >
                 {isSaving ? 'Saving...' : 'Save My Dates'}
               </button>
-            </div>
 
-            {/* Share Link Section */}
-            <div className="bg-white/60 p-6 rounded-2xl shadow-sm mt-6">
-              <h2 className="text-lg font-light text-center mb-4 text-[var(--foreground)]">
-                Share with Friends
-              </h2>
-              <p className="text-sm text-[var(--text-light)] font-light text-center mb-4">
-                Copy this link and send it to your friends
-              </p>
+              {/* Mobile Share Button */}
               <button
                 onClick={copyShareLink}
-                className="w-full px-4 py-3 bg-[var(--pastel-purple)] hover:bg-[var(--pastel-blue)]
+                className="lg:hidden w-full mt-3 px-4 py-3 bg-[var(--pastel-purple)] hover:bg-[var(--pastel-blue)]
                            text-[var(--foreground)] font-light tracking-wide transition-colors rounded-xl"
               >
-                {copied ? 'Copied!' : 'Copy Link'}
+                {copied ? 'Copied!' : 'Share with Friends'}
               </button>
             </div>
           </div>
 
           {/* Matching Dates Section */}
-          <div className="lg:w-72">
+          <div className="lg:w-72" ref={weCanDoRef}>
             <div className="bg-white/60 p-6 rounded-2xl shadow-sm sticky top-8">
               <h2 className="text-lg font-light text-center mb-4 text-[var(--foreground)]">
                 We can do:
@@ -318,6 +318,20 @@ export default function EventPage() {
                     </li>
                   ))}
                 </ul>
+              </div>
+
+              {/* Desktop Share Section */}
+              <div className="hidden lg:block mt-6 pt-4 border-t border-[var(--pastel-pink)]">
+                <h3 className="text-sm font-light text-[var(--text-light)] mb-3">
+                  Share with Friends
+                </h3>
+                <button
+                  onClick={copyShareLink}
+                  className="w-full px-4 py-3 bg-[var(--pastel-purple)] hover:bg-[var(--pastel-blue)]
+                             text-[var(--foreground)] font-light tracking-wide transition-colors rounded-xl text-sm"
+                >
+                  {copied ? 'Copied!' : 'Copy Link'}
+                </button>
               </div>
             </div>
           </div>

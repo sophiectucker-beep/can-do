@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import {
   format,
   startOfMonth,
@@ -41,6 +41,8 @@ export default function Calendar({
   const [showYearPicker, setShowYearPicker] = useState(false);
   const [showMonthPicker, setShowMonthPicker] = useState(false);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [longPressTooltip, setLongPressTooltip] = useState<{ date: string; voters: string[]; x: number; y: number } | null>(null);
+  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 6 }, (_, i) => currentYear + i); // Current year + 5 years
@@ -100,6 +102,36 @@ export default function Calendar({
       setCurrentMonth(newDate);
     }
   };
+
+  // Long press handlers for mobile tooltip
+  const handleTouchStart = useCallback((dateStr: string, voters: string[], e: React.TouchEvent) => {
+    if (voters.length === 0) return;
+
+    const touch = e.touches[0];
+    longPressTimer.current = setTimeout(() => {
+      setLongPressTooltip({
+        date: dateStr,
+        voters,
+        x: touch.clientX,
+        y: touch.clientY,
+      });
+    }, 500); // 500ms long press
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  }, []);
+
+  const handleTouchMove = useCallback(() => {
+    // Cancel long press if user moves finger
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  }, []);
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -233,6 +265,9 @@ export default function Calendar({
             <button
               key={dateStr}
               onClick={() => !isDisabled && onDateToggle(dateStr)}
+              onTouchStart={(e) => handleTouchStart(dateStr, voters, e)}
+              onTouchEnd={handleTouchEnd}
+              onTouchMove={handleTouchMove}
               disabled={isDisabled}
               title={tooltipText}
               className={`
@@ -278,6 +313,36 @@ export default function Calendar({
           <span>Everyone can do</span>
         </div>
       </div>
+
+      {/* Mobile hint */}
+      <p className="lg:hidden mt-3 text-center text-[10px] text-[var(--text-light)]">
+        Long press a date to see who voted
+      </p>
+
+      {/* Long Press Tooltip Modal */}
+      {longPressTooltip && (
+        <div
+          className="fixed inset-0 z-50"
+          onClick={() => setLongPressTooltip(null)}
+          onTouchStart={() => setLongPressTooltip(null)}
+        >
+          <div
+            className="absolute bg-white rounded-xl shadow-lg p-3 border border-[var(--pastel-pink)]"
+            style={{
+              left: Math.min(longPressTooltip.x, window.innerWidth - 160),
+              top: longPressTooltip.y - 80,
+              minWidth: '140px',
+            }}
+          >
+            <p className="text-xs font-medium text-[var(--foreground)] mb-1">
+              {format(new Date(longPressTooltip.date), 'MMM d')}
+            </p>
+            <p className="text-xs text-[var(--text-light)]">
+              {longPressTooltip.voters.join(', ')}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
