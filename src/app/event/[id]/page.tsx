@@ -270,7 +270,7 @@ export default function EventPage() {
                 onClick={saveDates}
                 disabled={isSaving || !userName.trim()}
                 className="w-full mt-4 px-6 py-3 bg-[var(--accent)] hover:bg-[var(--accent-hover)]
-                           text-[var(--text-light)] hover:text-white font-light tracking-wide transition-colors
+                           text-[var(--foreground)] hover:text-white font-light tracking-wide transition-colors
                            disabled:opacity-50 rounded-xl"
               >
                 {isSaving ? 'Saving...' : 'Save My Dates'}
