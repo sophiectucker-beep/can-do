@@ -188,8 +188,12 @@ export default function EventPage() {
               fill="none"
             >
               <path
-                d="M10 50 C14 44, 20 40, 24 44 L38 62 C42 54, 52 36, 65 20 C72 12, 80 5, 90 0 L92 1 C82 8, 70 22, 60 38 C50 54, 44 66, 40 74 C38 78, 34 78, 32 74 L16 50 C14 47, 10 47, 10 50Z"
-                fill="#f5d0d0"
+                d="M18 50 L40 72 L88 8"
+                stroke="#f5d0d0"
+                strokeWidth="18"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
               />
             </svg>
           </a>
