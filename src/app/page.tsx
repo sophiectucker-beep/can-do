@@ -47,16 +47,16 @@ export default function Home() {
           <svg
             className="absolute pointer-events-none z-0"
             style={{
-              width: '1.4em',
-              height: '1.4em',
-              right: '-0.35em',
-              bottom: '-0.45em',
+              width: '1.2em',
+              height: '1.2em',
+              right: '-0.5em',
+              bottom: '-0.35em',
             }}
             viewBox="0 0 100 100"
             fill="none"
           >
             <path
-              d="M15 55 C18 58, 25 72, 32 78 C36 82, 40 80, 44 74 C52 60, 65 38, 85 18 C88 15, 90 14, 88 16 C86 18, 65 42, 50 64 C42 76, 38 80, 34 76 C28 70, 22 58, 18 54 C16 52, 14 53, 15 55Z"
+              d="M8 52 C12 58, 20 68, 28 76 C32 80, 36 80, 40 74 C48 60, 60 40, 75 22 C82 13, 88 6, 92 2 C89 4, 82 14, 72 28 C60 46, 48 62, 42 72 C38 78, 34 78, 30 74 C24 66, 16 56, 10 50 C8 48, 7 50, 8 52Z"
               fill="#fce4e4"
             />
           </svg>
