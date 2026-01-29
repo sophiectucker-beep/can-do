@@ -43,30 +43,23 @@ export default function Home() {
           className="text-6xl font-bold mb-2 text-[var(--accent)] relative inline-block"
           style={{ fontFamily: 'var(--font-logo), sans-serif', WebkitTextStroke: '0.1px #e89999' }}
         >
-          Can D
-          <span className="relative">
-            o
-            <svg
-              className="absolute pointer-events-none"
-              style={{
-                width: '1.1em',
-                height: '1.1em',
-                top: '0.05em',
-                left: '-0.05em',
-              }}
-              viewBox="0 0 48 48"
-              fill="none"
-            >
-              <path
-                d="M12 25 C16 32, 20 38, 22 40 C24 42, 26 40, 28 36 C32 28, 38 16, 42 10"
-                stroke="#fce4e4"
-                strokeWidth="5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="none"
-              />
-            </svg>
-          </span>
+          <span className="relative z-10">Can Do</span>
+          <svg
+            className="absolute pointer-events-none z-0"
+            style={{
+              width: '1.4em',
+              height: '1.4em',
+              right: '-0.35em',
+              bottom: '-0.45em',
+            }}
+            viewBox="0 0 100 100"
+            fill="none"
+          >
+            <path
+              d="M15 55 C18 58, 25 72, 32 78 C36 82, 40 80, 44 74 C52 60, 65 38, 85 18 C88 15, 90 14, 88 16 C86 18, 65 42, 50 64 C42 76, 38 80, 34 76 C28 70, 22 58, 18 54 C16 52, 14 53, 15 55Z"
+              fill="#fce4e4"
+            />
+          </svg>
         </h1>
         <p className="text-[var(--text-light)] font-light mb-12">
           find the perfect date together
