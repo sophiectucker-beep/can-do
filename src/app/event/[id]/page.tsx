@@ -36,6 +36,7 @@ export default function EventPage() {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [hasSaved, setHasSaved] = useState(false);
   const weCanDoRef = useRef<HTMLDivElement>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   // Get or create visitor ID on mount
   useEffect(() => {
@@ -187,6 +188,7 @@ export default function EventPage() {
           </p>
           <div className="flex items-center justify-center gap-2">
             <input
+              ref={nameInputRef}
               type="text"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
@@ -194,11 +196,24 @@ export default function EventPage() {
               className="px-3 py-1.5 bg-white border border-[var(--pastel-pink)]
                          focus:border-[var(--accent)] focus:outline-none
                          text-center font-light rounded-lg w-48"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && userName.trim()) {
+                  saveDates();
+                  nameInputRef.current?.blur();
+                }
+              }}
             />
-            <svg className="w-4 h-4 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
-            </svg>
+            <button
+              onClick={() => nameInputRef.current?.focus()}
+              className="p-1"
+              aria-label="Edit name"
+              type="button"
+            >
+              <svg className="w-4 h-4 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                  d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
+              </svg>
+            </button>
           </div>
         </div>
 
