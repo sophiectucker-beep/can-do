@@ -173,7 +173,7 @@ export default function EventPage() {
           <a
             href="/"
             className="text-5xl font-bold text-[var(--accent)] hover:opacity-80 transition-opacity relative inline-block"
-            style={{ fontFamily: 'var(--font-logo), sans-serif', textShadow: '0 0 1px #e89999' }}
+            style={{ fontFamily: 'var(--font-logo), sans-serif', textShadow: '0 0 0.03em #e89999' }}
           >
             Can Do
           </a>
