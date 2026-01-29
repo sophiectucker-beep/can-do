@@ -179,17 +179,17 @@ export default function EventPage() {
             <svg
               className="absolute pointer-events-none"
               style={{
-                width: '1.3em',
-                height: '1.3em',
-                right: '-0.55em',
-                bottom: '-0.3em',
+                width: '0.9em',
+                height: '0.9em',
+                right: '-0.4em',
+                bottom: '-0.15em',
               }}
               viewBox="0 0 100 100"
               fill="none"
             >
               <path
-                d="M8 42 C12 36, 18 34, 22 38 C26 42, 30 48, 34 54 C38 48, 46 36, 56 24 C66 12, 76 4, 88 0 C90 0, 91 1, 90 2 C78 10, 66 22, 56 36 C46 50, 38 62, 36 68 C34 72, 30 72, 28 68 C24 60, 18 48, 12 42 C10 40, 8 40, 8 42Z"
-                fill="#fce4e4"
+                d="M10 50 C14 44, 20 40, 24 44 L38 62 C42 54, 52 36, 65 20 C72 12, 80 5, 90 0 L92 1 C82 8, 70 22, 60 38 C50 54, 44 66, 40 74 C38 78, 34 78, 32 74 L16 50 C14 47, 10 47, 10 50Z"
+                fill="#f5d0d0"
               />
             </svg>
           </a>
