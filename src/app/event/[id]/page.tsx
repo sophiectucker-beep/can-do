@@ -164,10 +164,10 @@ export default function EventPage() {
   }
 
   return (
-    <main className="min-h-screen p-8">
+    <main className="min-h-screen p-4 pt-6 lg:p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-4 lg:mb-8">
           <a
             href="/"
             className="text-4xl font-bold text-[var(--accent)] hover:opacity-80 transition-opacity"
@@ -177,11 +177,14 @@ export default function EventPage() {
           </a>
         </div>
 
-        {/* Event Title & User Name */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-light tracking-wide text-[var(--foreground)] mb-2">
+        {/* Event Title, Creator & User Name */}
+        <div className="text-center mb-4 lg:mb-8">
+          <h1 className="text-3xl font-light tracking-wide text-[var(--foreground)] mb-1">
             {event.title}
           </h1>
+          <p className="text-xs text-[var(--text-light)] font-light mb-3">
+            created by {event.creatorName}
+          </p>
           {isEditingName ? (
             <div className="flex items-center justify-center gap-2">
               <input
@@ -190,9 +193,9 @@ export default function EventPage() {
                 value={userName}
                 onChange={(e) => setUserName(e.target.value)}
                 autoFocus
-                className="px-3 py-1 bg-white border border-[var(--pastel-pink)]
+                className="px-3 py-1.5 bg-white border border-[var(--pastel-pink)]
                            focus:border-[var(--accent)] focus:outline-none
-                           text-center font-light text-sm rounded-lg w-40"
+                           text-center font-light rounded-lg w-48"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && userName.trim()) {
                     setIsEditingName(false);
@@ -206,11 +209,11 @@ export default function EventPage() {
           ) : (
             <button
               onClick={() => setIsEditingName(true)}
-              className="inline-flex items-center gap-1.5 text-sm text-[var(--text-light)] font-light
+              className="inline-flex items-center gap-2 text-base text-[var(--foreground)] font-light
                          hover:text-[var(--accent)] transition-colors"
             >
               <span>{userName || 'Set your name'}</span>
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
                   d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
               </svg>
@@ -253,7 +256,7 @@ export default function EventPage() {
           </div>
         )}
 
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           {/* Calendar Section */}
           <div className="flex-1">
             <div className="bg-white/60 p-6 rounded-2xl shadow-sm">
