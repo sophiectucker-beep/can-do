@@ -119,6 +119,32 @@ export async function updateParticipantDates(
   return await getEvent(eventId);
 }
 
+export async function updateParticipantName(
+  eventId: string,
+  visitorId: string,
+  newName: string
+): Promise<CalendarEvent | null> {
+  const event = await getEvent(eventId);
+  if (!event) return null;
+
+  const participant = event.participants.find(p => p.id === visitorId);
+  if (!participant) return null;
+
+  participant.name = newName;
+
+  // If this participant is the creator, also update creatorName
+  if (participant.isCreator) {
+    event.creatorName = newName;
+  }
+
+  const threeMonthsInSeconds = 90 * 24 * 60 * 60;
+  await redis.set(`${EVENT_PREFIX}${eventId}`, JSON.stringify(event), {
+    ex: threeMonthsInSeconds,
+  });
+
+  return event;
+}
+
 export async function updateEventTitle(
   eventId: string,
   visitorId: string,

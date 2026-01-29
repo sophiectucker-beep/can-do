@@ -67,7 +67,7 @@ export default function EventPage() {
         const participant = data.participants.find(
           (p: Participant) => p.id === visitorId
         );
-        if (participant && !hasUnsavedChanges) {
+        if (participant && !hasUnsavedChanges && !editingName) {
           setSelectedDates(participant.selectedDates);
           setUserName(participant.name);
           setShowNamePrompt(false);
@@ -78,7 +78,7 @@ export default function EventPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [eventId, visitorId, hasUnsavedChanges]);
+  }, [eventId, visitorId, hasUnsavedChanges, editingName]);
 
   useEffect(() => {
     if (visitorId) {
@@ -180,6 +180,30 @@ export default function EventPage() {
     }
   };
 
+  const saveName = async () => {
+    setEditingName(false);
+    if (!userName.trim() || !event) return;
+
+    // Check if name actually changed
+    const participant = event.participants.find(p => p.id === visitorId);
+    if (participant && participant.name === userName.trim()) return;
+
+    try {
+      const response = await fetch(`/api/events/${eventId}/name`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ visitorId, name: userName.trim() }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setEvent(data);
+      }
+    } catch (error) {
+      console.error('Error updating name:', error);
+    }
+  };
+
   // Get participant selections for calendar display
   const participantSelections: Record<string, string[]> = {};
   event?.participants.forEach(p => {
@@ -269,10 +293,10 @@ export default function EventPage() {
               onChange={(e) => setUserName(e.target.value)}
               placeholder="Your name"
               autoFocus
-              onBlur={() => setEditingName(false)}
+              onBlur={saveName}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && userName.trim()) {
-                  setEditingName(false);
+                  saveName();
                   nameInputRef.current?.blur();
                 }
                 if (e.key === 'Escape') {
