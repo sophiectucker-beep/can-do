@@ -234,8 +234,8 @@ export default function EventPage() {
                 }
               }}
               className="text-3xl font-light tracking-wide text-[var(--foreground)] mb-1
-                         bg-transparent border-b border-[var(--pastel-pink)] focus:border-[var(--accent)]
-                         focus:outline-none text-center w-full max-w-lg mx-auto block"
+                         px-4 py-1.5 bg-white border border-[var(--pastel-pink)] focus:border-[var(--accent)]
+                         focus:outline-none text-center rounded-lg max-w-lg mx-auto block"
             />
           ) : (
             <div
