@@ -173,7 +173,7 @@ export default function EventPage() {
           <a
             href="/"
             className="text-5xl font-bold text-[var(--accent)] hover:opacity-80 transition-opacity"
-            style={{ fontFamily: 'var(--font-logo), sans-serif', WebkitTextStroke: '0.2px #e89999' }}
+            style={{ fontFamily: 'var(--font-logo), sans-serif', WebkitTextStroke: '0.1px #e89999' }}
           >
             Can Do
           </a>
@@ -206,7 +206,7 @@ export default function EventPage() {
             />
             <button
               onClick={() => nameInputRef.current?.focus()}
-              className="p-0.5 -ml-1"
+              className="p-0.5 ml-0.5"
               aria-label="Edit name"
               type="button"
             >

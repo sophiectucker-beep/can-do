@@ -41,7 +41,7 @@ export default function Home() {
         {/* Logo */}
         <h1
           className="text-6xl font-bold mb-2 text-[var(--accent)]"
-          style={{ fontFamily: 'var(--font-logo), sans-serif', WebkitTextStroke: '0.2px #e89999' }}
+          style={{ fontFamily: 'var(--font-logo), sans-serif', WebkitTextStroke: '0.1px #e89999' }}
         >
           Can Do
         </h1>
