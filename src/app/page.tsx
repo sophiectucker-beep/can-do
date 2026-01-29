@@ -41,7 +41,7 @@ export default function Home() {
         {/* Logo */}
         <h1
           className="text-6xl font-bold mb-2 text-[var(--accent)] relative inline-block"
-          style={{ fontFamily: 'var(--font-logo), sans-serif', textShadow: '1px 1px 0 #f0c4c4, -1px -1px 0 #f0c4c4, 1px -1px 0 #f0c4c4, -1px 1px 0 #f0c4c4' }}
+          style={{ fontFamily: 'var(--font-logo), sans-serif', textShadow: '0 0 0.02em #d48a8a' }}
         >
           Can Do
         </h1>
