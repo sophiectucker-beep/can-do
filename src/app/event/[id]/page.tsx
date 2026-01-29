@@ -175,22 +175,6 @@ export default function EventPage() {
             className="text-5xl font-bold text-[var(--accent)] hover:opacity-80 transition-opacity relative inline-block"
             style={{ fontFamily: 'var(--font-logo), sans-serif', textShadow: '0 0 1px #e89999' }}
           >
-            <svg
-              className="absolute pointer-events-none"
-              style={{
-                width: '0.8em',
-                height: '0.8em',
-                left: '-0.6em',
-                bottom: '-0.05em',
-              }}
-              viewBox="0 0 100 100"
-              fill="none"
-            >
-              <path
-                d="M4 52 L16 40 L36 72 L56 36 C68 16, 82 4, 96 0 L36 84 Z"
-                fill="white"
-              />
-            </svg>
             Can Do
           </a>
         </div>
