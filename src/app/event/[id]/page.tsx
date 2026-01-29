@@ -38,6 +38,7 @@ export default function EventPage() {
   const [showShareTooltip, setShowShareTooltip] = useState(false);
   const [editingTitle, setEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState('');
+  const [editingName, setEditingName] = useState(false);
   const weCanDoRef = useRef<HTMLDivElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -247,7 +248,7 @@ export default function EventPage() {
               </h1>
               {isCreator && (
                 <svg
-                  className="w-4 h-4 text-[var(--accent)] opacity-0 group-hover:opacity-100 transition-opacity
+                  className="w-5 h-5 text-[var(--accent)] opacity-0 group-hover:opacity-100 transition-opacity
                              lg:block hidden"
                   fill="none" stroke="currentColor" viewBox="-1 -1 26 26"
                 >
@@ -260,35 +261,46 @@ export default function EventPage() {
           <p className="text-xs text-[var(--text-light)] font-light mb-3">
             created by {event.creatorName}
           </p>
-          <div className="flex items-center justify-center gap-0">
+          {editingName ? (
             <input
               ref={nameInputRef}
               type="text"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
               placeholder="Your name"
+              autoFocus
+              onBlur={() => setEditingName(false)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && userName.trim()) {
+                  setEditingName(false);
+                  nameInputRef.current?.blur();
+                }
+                if (e.key === 'Escape') {
+                  setEditingName(false);
+                }
+              }}
               className="px-3 py-1.5 bg-white border border-[var(--pastel-pink)]
                          focus:border-[var(--accent)] focus:outline-none
                          text-center font-light rounded-lg w-48"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && userName.trim()) {
-                  saveDates();
-                  nameInputRef.current?.blur();
-                }
-              }}
             />
-            <button
-              onClick={() => nameInputRef.current?.focus()}
-              className="p-0.5 ml-0.5"
-              aria-label="Edit name"
-              type="button"
+          ) : (
+            <div
+              className="group inline-flex items-center gap-1 cursor-pointer"
+              onClick={() => setEditingName(true)}
             >
-              <svg className="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="-1 -1 26 26">
+              <span className="font-light text-[var(--foreground)] border-b border-[var(--pastel-pink)]">
+                {userName || 'Your name'}
+              </span>
+              <svg
+                className="w-5 h-5 text-[var(--accent)] opacity-0 group-hover:opacity-100 transition-opacity
+                           lg:block hidden"
+                fill="none" stroke="currentColor" viewBox="-1 -1 26 26"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
                   d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
               </svg>
-            </button>
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Name Prompt Modal */}
