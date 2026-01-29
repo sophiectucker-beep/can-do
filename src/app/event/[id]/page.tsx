@@ -36,8 +36,11 @@ export default function EventPage() {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [hasSaved, setHasSaved] = useState(false);
   const [showShareTooltip, setShowShareTooltip] = useState(false);
+  const [editingTitle, setEditingTitle] = useState(false);
+  const [editedTitle, setEditedTitle] = useState('');
   const weCanDoRef = useRef<HTMLDivElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
+  const titleInputRef = useRef<HTMLInputElement>(null);
 
   // Get or create visitor ID on mount
   useEffect(() => {
@@ -143,6 +146,39 @@ export default function EventPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const isCreator = event?.participants.some(p => p.id === visitorId && p.isCreator) ?? false;
+
+  const startEditingTitle = () => {
+    if (!isCreator || !event) return;
+    setEditedTitle(event.title);
+    setEditingTitle(true);
+    setTimeout(() => titleInputRef.current?.focus(), 0);
+  };
+
+  const saveTitle = async () => {
+    if (!editedTitle.trim() || !event || editedTitle.trim() === event.title) {
+      setEditingTitle(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/events/${eventId}/title`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ visitorId, title: editedTitle.trim() }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setEvent(data);
+      }
+    } catch (error) {
+      console.error('Error updating title:', error);
+    } finally {
+      setEditingTitle(false);
+    }
+  };
+
   // Get participant selections for calendar display
   const participantSelections: Record<string, string[]> = {};
   event?.participants.forEach(p => {
@@ -173,7 +209,7 @@ export default function EventPage() {
           <a
             href="/"
             className="text-5xl font-bold text-[var(--accent)] hover:opacity-80 transition-opacity relative inline-block"
-            style={{ fontFamily: 'var(--font-logo), sans-serif', textShadow: '0 0 0.03em #e89999' }}
+            style={{ fontFamily: 'var(--font-logo), sans-serif', textShadow: '0 0 0.02em #d48a8a' }}
           >
             Can Do
           </a>
@@ -181,9 +217,46 @@ export default function EventPage() {
 
         {/* Event Title, Creator & User Name */}
         <div className="text-center mb-4 lg:mb-8">
-          <h1 className="text-3xl font-light tracking-wide text-[var(--foreground)] mb-1">
-            {event.title}
-          </h1>
+          {editingTitle ? (
+            <input
+              ref={titleInputRef}
+              type="text"
+              value={editedTitle}
+              onChange={(e) => setEditedTitle(e.target.value)}
+              onBlur={saveTitle}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  saveTitle();
+                  titleInputRef.current?.blur();
+                }
+                if (e.key === 'Escape') {
+                  setEditingTitle(false);
+                }
+              }}
+              className="text-3xl font-light tracking-wide text-[var(--foreground)] mb-1
+                         bg-transparent border-b border-[var(--pastel-pink)] focus:border-[var(--accent)]
+                         focus:outline-none text-center w-full max-w-lg mx-auto block"
+            />
+          ) : (
+            <div
+              className={`group mb-1 inline-flex items-center gap-1 ${isCreator ? 'cursor-pointer' : ''}`}
+              onClick={() => isCreator && startEditingTitle()}
+            >
+              <h1 className="text-3xl font-light tracking-wide text-[var(--foreground)]">
+                {event.title}
+              </h1>
+              {isCreator && (
+                <svg
+                  className="w-4 h-4 text-[var(--accent)] opacity-0 group-hover:opacity-100 transition-opacity
+                             lg:block hidden"
+                  fill="none" stroke="currentColor" viewBox="-1 -1 26 26"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
+                </svg>
+              )}
+            </div>
+          )}
           <p className="text-xs text-[var(--text-light)] font-light mb-3">
             created by {event.creatorName}
           </p>
