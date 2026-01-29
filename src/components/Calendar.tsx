@@ -269,10 +269,9 @@ export default function Calendar({
               onTouchEnd={handleTouchEnd}
               onTouchMove={handleTouchMove}
               disabled={isDisabled}
-              title={tooltipText}
               className={`
                 calendar-day aspect-square flex flex-col items-center justify-center
-                text-sm font-light transition-all duration-200 relative
+                text-sm font-light transition-all duration-200 relative group/day
                 ${isDisabled ? 'opacity-30 cursor-default' : 'cursor-pointer hover:scale-105'}
                 ${isPast && inCurrentMonth ? 'bg-gray-100' : ''}
                 ${!isPast && selected
@@ -292,6 +291,15 @@ export default function Calendar({
                 <span className="text-[10px] text-[var(--text-light)] mt-0.5">
                   {selectionCount} {selectionCount === 1 ? 'vote' : 'votes'}
                 </span>
+              )}
+              {voters.length > 0 && !isDisabled && (
+                <div className="hidden group-hover/day:block absolute bottom-full left-1/2 -translate-x-1/2 mb-1 z-50
+                                bg-white rounded-lg shadow-lg p-2 border border-[var(--pastel-pink)]
+                                whitespace-nowrap pointer-events-none">
+                  <p className="text-[11px] text-[var(--foreground)]">
+                    {voters.join(', ')}
+                  </p>
+                </div>
               )}
             </button>
           );
