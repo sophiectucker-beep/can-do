@@ -181,12 +181,17 @@ export default function EventPage() {
   };
 
   const saveName = async () => {
-    setEditingName(false);
-    if (!userName.trim() || !event) return;
+    if (!userName.trim() || !event) {
+      setEditingName(false);
+      return;
+    }
 
     // Check if name actually changed
     const participant = event.participants.find(p => p.id === visitorId);
-    if (participant && participant.name === userName.trim()) return;
+    if (participant && participant.name === userName.trim()) {
+      setEditingName(false);
+      return;
+    }
 
     try {
       const response = await fetch(`/api/events/${eventId}/name`, {
@@ -201,6 +206,8 @@ export default function EventPage() {
       }
     } catch (error) {
       console.error('Error updating name:', error);
+    } finally {
+      setEditingName(false);
     }
   };
 
