@@ -34,7 +34,9 @@ export default function EventPage() {
   const [showNamePrompt, setShowNamePrompt] = useState(false);
   const [copied, setCopied] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [isEditingName, setIsEditingName] = useState(false);
   const weCanDoRef = useRef<HTMLDivElement>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   // Get or create visitor ID on mount
   useEffect(() => {
@@ -168,21 +170,52 @@ export default function EventPage() {
         <div className="text-center mb-8">
           <a
             href="/"
-            className="text-3xl font-bold text-[var(--accent)] hover:opacity-80 transition-opacity"
+            className="text-4xl font-bold text-[var(--accent)] hover:opacity-80 transition-opacity"
             style={{ fontFamily: 'var(--font-logo), sans-serif' }}
           >
             Can Do
           </a>
         </div>
 
-        {/* Event Title */}
+        {/* Event Title & User Name */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-light tracking-wide text-[var(--foreground)] mb-2">
             {event.title}
           </h1>
-          <p className="text-sm text-[var(--text-light)] font-light">
-            Created by {event.creatorName}
-          </p>
+          {isEditingName ? (
+            <div className="flex items-center justify-center gap-2">
+              <input
+                ref={nameInputRef}
+                type="text"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                autoFocus
+                className="px-3 py-1 bg-white border border-[var(--pastel-pink)]
+                           focus:border-[var(--accent)] focus:outline-none
+                           text-center font-light text-sm rounded-lg w-40"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && userName.trim()) {
+                    setIsEditingName(false);
+                  }
+                }}
+                onBlur={() => {
+                  if (userName.trim()) setIsEditingName(false);
+                }}
+              />
+            </div>
+          ) : (
+            <button
+              onClick={() => setIsEditingName(true)}
+              className="inline-flex items-center gap-1.5 text-sm text-[var(--text-light)] font-light
+                         hover:text-[var(--accent)] transition-colors"
+            >
+              <span>{userName || 'Set your name'}</span>
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                  d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
+              </svg>
+            </button>
+          )}
         </div>
 
         {/* Name Prompt Modal */}
@@ -211,7 +244,7 @@ export default function EventPage() {
                 onClick={() => userName.trim() && setShowNamePrompt(false)}
                 disabled={!userName.trim()}
                 className="w-full px-4 py-3 bg-[var(--accent)] hover:bg-[var(--accent-hover)]
-                           text-white font-light tracking-wide transition-colors rounded-xl
+                           text-[var(--text-light)] hover:text-white font-light tracking-wide transition-colors rounded-xl
                            disabled:opacity-50"
               >
                 Continue
@@ -234,36 +267,14 @@ export default function EventPage() {
                 participantSelections={participantSelections}
               />
 
-              {/* Name input */}
-              <div className="mt-4">
-                <input
-                  type="text"
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
-                  placeholder="Your name"
-                  className="w-full px-4 py-3 bg-white border border-[var(--pastel-pink)]
-                             focus:border-[var(--accent)] focus:outline-none
-                             text-center font-light rounded-xl"
-                />
-              </div>
-
               <button
                 onClick={saveDates}
                 disabled={isSaving || !userName.trim()}
                 className="w-full mt-4 px-6 py-3 bg-[var(--accent)] hover:bg-[var(--accent-hover)]
-                           text-white font-light tracking-wide transition-colors
+                           text-[var(--text-light)] hover:text-white font-light tracking-wide transition-colors
                            disabled:opacity-50 rounded-xl"
               >
                 {isSaving ? 'Saving...' : 'Save My Dates'}
-              </button>
-
-              {/* Mobile Share Button */}
-              <button
-                onClick={copyShareLink}
-                className="lg:hidden w-full mt-3 px-4 py-3 bg-[var(--pastel-purple)] hover:bg-[var(--pastel-blue)]
-                           text-[var(--foreground)] font-light tracking-wide transition-colors rounded-xl"
-              >
-                {copied ? 'Copied!' : 'Share with Friends'}
               </button>
             </div>
           </div>
@@ -337,6 +348,26 @@ export default function EventPage() {
           </div>
         </div>
       </div>
+
+      {/* Floating Share Button - Mobile Only */}
+      <button
+        onClick={copyShareLink}
+        className="lg:hidden fixed bottom-6 right-6 w-14 h-14 bg-[var(--pastel-purple)] hover:bg-[var(--pastel-blue)]
+                   rounded-full shadow-lg flex items-center justify-center transition-all z-40
+                   active:scale-95"
+        aria-label="Share link"
+      >
+        {copied ? (
+          <svg className="w-6 h-6 text-[var(--foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
+        ) : (
+          <svg className="w-6 h-6 text-[var(--foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+              d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+          </svg>
+        )}
+      </button>
     </main>
   );
 }

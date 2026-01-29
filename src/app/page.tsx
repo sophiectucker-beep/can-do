@@ -81,7 +81,7 @@ export default function Home() {
             type="submit"
             disabled={!title.trim() || !name.trim() || isLoading}
             className="w-full px-6 py-4 bg-[var(--accent)] hover:bg-[var(--accent-hover)]
-                       text-white font-light tracking-wide
+                       text-[var(--text-light)] hover:text-white font-light tracking-wide
                        transition-colors disabled:opacity-50 disabled:cursor-not-allowed
                        shadow-sm"
           >
