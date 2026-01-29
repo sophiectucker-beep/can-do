@@ -34,9 +34,8 @@ export default function EventPage() {
   const [showNamePrompt, setShowNamePrompt] = useState(false);
   const [copied, setCopied] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [isEditingName, setIsEditingName] = useState(false);
+  const [hasSaved, setHasSaved] = useState(false);
   const weCanDoRef = useRef<HTMLDivElement>(null);
-  const nameInputRef = useRef<HTMLInputElement>(null);
 
   // Get or create visitor ID on mount
   useEffect(() => {
@@ -119,6 +118,7 @@ export default function EventPage() {
         setEvent(data);
         setShowNamePrompt(false);
         setHasUnsavedChanges(false);
+        setHasSaved(true);
 
         // On mobile, scroll to "We can do" section after saving
         if (window.innerWidth < 1024 && weCanDoRef.current) {
@@ -185,40 +185,17 @@ export default function EventPage() {
           <p className="text-xs text-[var(--text-light)] font-light mb-3">
             created by {event.creatorName}
           </p>
-          {isEditingName ? (
-            <div className="flex items-center justify-center gap-2">
-              <input
-                ref={nameInputRef}
-                type="text"
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-                autoFocus
-                className="px-3 py-1.5 bg-white border border-[var(--pastel-pink)]
-                           focus:border-[var(--accent)] focus:outline-none
-                           text-center font-light rounded-lg w-48"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && userName.trim()) {
-                    setIsEditingName(false);
-                  }
-                }}
-                onBlur={() => {
-                  if (userName.trim()) setIsEditingName(false);
-                }}
-              />
-            </div>
-          ) : (
-            <button
-              onClick={() => setIsEditingName(true)}
-              className="inline-flex items-center gap-2 text-base text-[var(--foreground)] font-light
-                         hover:text-[var(--accent)] transition-colors"
-            >
-              <span>{userName || 'Set your name'}</span>
-              <svg className="w-4 h-4 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                  d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
-              </svg>
-            </button>
-          )}
+          <div className="flex items-center justify-center">
+            <input
+              type="text"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              placeholder="Your name"
+              className="px-3 py-1.5 bg-white border border-[var(--pastel-pink)]
+                         focus:border-[var(--accent)] focus:outline-none
+                         text-center font-light rounded-lg w-48"
+            />
+          </div>
         </div>
 
         {/* Name Prompt Modal */}
@@ -352,25 +329,27 @@ export default function EventPage() {
         </div>
       </div>
 
-      {/* Floating Share Button - Mobile Only */}
-      <button
-        onClick={copyShareLink}
-        className="lg:hidden fixed bottom-6 right-6 w-14 h-14 bg-[var(--pastel-purple)] hover:bg-[var(--pastel-blue)]
-                   rounded-full shadow-lg flex items-center justify-center transition-all z-40
-                   active:scale-95"
-        aria-label="Share link"
-      >
-        {copied ? (
-          <svg className="w-6 h-6 text-[var(--foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.5 12.75l6 6 9-13.5" />
-          </svg>
-        ) : (
-          <svg className="w-6 h-6 text-[var(--foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-              d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
-          </svg>
-        )}
-      </button>
+      {/* Floating Share Button - Mobile Only, appears after saving */}
+      {hasSaved && (
+        <button
+          onClick={copyShareLink}
+          className="lg:hidden fixed bottom-6 right-6 w-14 h-14 bg-[var(--pastel-purple)] hover:bg-[var(--pastel-blue)]
+                     rounded-full shadow-lg flex items-center justify-center transition-all z-40
+                     active:scale-95"
+          aria-label="Share link"
+        >
+          {copied ? (
+            <svg className="w-6 h-6 text-[var(--foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.5 12.75l6 6 9-13.5" />
+            </svg>
+          ) : (
+            <svg className="w-6 h-6 text-[var(--foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+            </svg>
+          )}
+        </button>
+      )}
     </main>
   );
 }

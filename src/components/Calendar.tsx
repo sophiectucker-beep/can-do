@@ -283,7 +283,7 @@ export default function Calendar({
                     ? 'bg-[var(--pastel-green)] text-[var(--foreground)] shadow-sm'
                     : !isPast && selectionCount > 0
                       ? 'bg-[var(--pastel-yellow)] text-[var(--foreground)]'
-                      : !isPast ? 'bg-white/50 hover:bg-[var(--pastel-yellow)]' : ''
+                      : !isPast ? 'bg-white/50 hover:bg-[var(--pastel-pink)]' : ''
                 }
               `}
             >
