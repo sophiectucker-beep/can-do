@@ -186,7 +186,7 @@ export default function EventPage() {
           <p className="text-xs text-[var(--text-light)] font-light mb-3">
             created by {event.creatorName}
           </p>
-          <div className="flex items-center justify-center gap-1">
+          <div className="flex items-center justify-center gap-0.5">
             <input
               ref={nameInputRef}
               type="text"
