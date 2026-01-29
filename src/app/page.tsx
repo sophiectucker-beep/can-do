@@ -56,12 +56,8 @@ export default function Home() {
             fill="none"
           >
             <path
-              d="M18 50 L40 72 L88 8"
-              stroke="#f5d0d0"
-              strokeWidth="18"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
+              d="M12 44 C10 40, 12 36, 16 38 C20 40, 28 50, 34 58 C34 58, 36 62, 38 62 C40 62, 42 58, 46 52 C54 38, 66 20, 80 8 C86 3, 92 0, 94 0 C92 2, 84 10, 76 20 C64 36, 52 54, 44 68 C42 72, 40 74, 38 74 C36 74, 34 72, 32 68 C26 58, 18 48, 14 44 C12 42, 12 42, 12 44Z"
+              fill="white"
             />
           </svg>
         </h1>
