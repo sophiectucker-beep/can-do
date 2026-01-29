@@ -43,20 +43,20 @@ export default function Home() {
           className="text-6xl font-bold mb-2 text-[var(--accent)] relative inline-block"
           style={{ fontFamily: 'var(--font-logo), sans-serif', WebkitTextStroke: '0.1px #e89999' }}
         >
-          <span className="relative z-10">Can Do</span>
+          Can Do
           <svg
-            className="absolute pointer-events-none z-0"
+            className="absolute pointer-events-none"
             style={{
               width: '1.3em',
               height: '1.3em',
               right: '-0.55em',
-              bottom: '-0.4em',
+              bottom: '-0.3em',
             }}
             viewBox="0 0 100 100"
             fill="none"
           >
             <path
-              d="M5 48 C8 42, 14 38, 20 42 C26 46, 32 56, 36 64 C40 58, 48 42, 58 28 C68 14, 78 4, 90 0 C92 0, 93 1, 92 2 C82 10, 70 26, 60 42 C50 58, 42 72, 38 80 C36 84, 32 84, 30 80 C24 68, 16 54, 8 48 C6 46, 4 46, 5 48Z"
+              d="M8 42 C12 36, 18 34, 22 38 C26 42, 30 48, 34 54 C38 48, 46 36, 56 24 C66 12, 76 4, 88 0 C90 0, 91 1, 90 2 C78 10, 66 22, 56 36 C46 50, 38 62, 36 68 C34 72, 30 72, 28 68 C24 60, 18 48, 12 42 C10 40, 8 40, 8 42Z"
               fill="#fce4e4"
             />
           </svg>
