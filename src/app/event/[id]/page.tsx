@@ -187,7 +187,7 @@ export default function EventPage() {
           <p className="text-xs text-[var(--text-light)] font-light mb-3">
             created by {event.creatorName}
           </p>
-          <div className="flex items-center justify-center gap-0.5">
+          <div className="flex items-center justify-center gap-0">
             <input
               ref={nameInputRef}
               type="text"
@@ -206,7 +206,7 @@ export default function EventPage() {
             />
             <button
               onClick={() => nameInputRef.current?.focus()}
-              className="p-0.5"
+              className="p-0.5 -ml-1"
               aria-label="Edit name"
               type="button"
             >
