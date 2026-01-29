@@ -40,10 +40,33 @@ export default function Home() {
       <div className="w-full max-w-md text-center">
         {/* Logo */}
         <h1
-          className="text-6xl font-bold mb-2 text-[var(--accent)]"
+          className="text-6xl font-bold mb-2 text-[var(--accent)] relative inline-block"
           style={{ fontFamily: 'var(--font-logo), sans-serif', WebkitTextStroke: '0.1px #e89999' }}
         >
-          Can Do
+          Can D
+          <span className="relative">
+            o
+            <svg
+              className="absolute pointer-events-none"
+              style={{
+                width: '1.1em',
+                height: '1.1em',
+                top: '0.05em',
+                left: '-0.05em',
+              }}
+              viewBox="0 0 48 48"
+              fill="none"
+            >
+              <path
+                d="M12 25 C16 32, 20 38, 22 40 C24 42, 26 40, 28 36 C32 28, 38 16, 42 10"
+                stroke="#fce4e4"
+                strokeWidth="5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
+            </svg>
+          </span>
         </h1>
         <p className="text-[var(--text-light)] font-light mb-12">
           find the perfect date together
