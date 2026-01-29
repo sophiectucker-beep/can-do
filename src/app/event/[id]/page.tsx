@@ -35,6 +35,7 @@ export default function EventPage() {
   const [copied, setCopied] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [hasSaved, setHasSaved] = useState(false);
+  const [showShareTooltip, setShowShareTooltip] = useState(false);
   const weCanDoRef = useRef<HTMLDivElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
 
@@ -350,24 +351,38 @@ export default function EventPage() {
 
       {/* Floating Share Button - Mobile Only, appears after saving */}
       {hasSaved && (
-        <button
-          onClick={copyShareLink}
-          className="lg:hidden fixed bottom-6 right-6 w-14 h-14 bg-[var(--pastel-purple)] hover:bg-[var(--pastel-blue)]
-                     rounded-full shadow-lg flex items-center justify-center transition-all z-40
-                     active:scale-95"
-          aria-label="Share link"
-        >
-          {copied ? (
-            <svg className="w-6 h-6 text-[var(--foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.5 12.75l6 6 9-13.5" />
-            </svg>
-          ) : (
-            <svg className="w-6 h-6 text-[var(--foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-            </svg>
+        <div className="lg:hidden fixed bottom-6 right-6 z-40 flex items-center gap-2">
+          {showShareTooltip && (
+            <button
+              onClick={() => {
+                copyShareLink();
+                setShowShareTooltip(false);
+              }}
+              className="px-4 py-2 bg-white rounded-full shadow-lg border border-[var(--pastel-pink)]
+                         text-sm font-light text-[var(--foreground)] active:scale-95 transition-all"
+            >
+              {copied ? 'Copied!' : 'Copy Link'}
+            </button>
           )}
-        </button>
+          <button
+            onClick={() => setShowShareTooltip(prev => !prev)}
+            className="w-14 h-14 bg-[var(--pastel-purple)] hover:bg-[var(--pastel-blue)]
+                       rounded-full shadow-lg flex items-center justify-center transition-all
+                       active:scale-95"
+            aria-label="Share link"
+          >
+            {copied ? (
+              <svg className="w-6 h-6 text-[var(--foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.5 12.75l6 6 9-13.5" />
+              </svg>
+            ) : (
+              <svg className="w-6 h-6 text-[var(--foreground)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                  d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+              </svg>
+            )}
+          </button>
+        </div>
       )}
     </main>
   );
