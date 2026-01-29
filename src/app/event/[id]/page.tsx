@@ -186,7 +186,7 @@ export default function EventPage() {
           <p className="text-xs text-[var(--text-light)] font-light mb-3">
             created by {event.creatorName}
           </p>
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-center gap-1">
             <input
               ref={nameInputRef}
               type="text"
@@ -205,11 +205,11 @@ export default function EventPage() {
             />
             <button
               onClick={() => nameInputRef.current?.focus()}
-              className="p-1"
+              className="p-0.5"
               aria-label="Edit name"
               type="button"
             >
-              <svg className="w-4 h-4 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
                   d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
               </svg>
