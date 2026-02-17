@@ -176,7 +176,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${nunito.variable} ${hankyDemo.variable} antialiased page-curl`}
+        className={`${nunito.variable} ${hankyDemo.variable} antialiased`}
         style={{ fontFamily: "var(--font-nunito), sans-serif" }}
       >
         {children}
