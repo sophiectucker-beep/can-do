@@ -125,7 +125,7 @@ export default function Home() {
 
       {/* Social Proof */}
       {eventCount !== null && eventCount > 0 && (
-        <p className="text-xs text-white font-light mb-6 bg-[#7c9885] px-5 py-2.5 rounded-full shadow-sm">
+        <p className="text-[10px] text-white font-light mb-8 bg-[#7c9885] px-3 py-1.5 rounded-full shadow-sm">
           🎉 {eventCount.toLocaleString()} {eventCount === 1 ? 'event' : 'events'} created and counting!
         </p>
       )}
