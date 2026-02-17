@@ -386,6 +386,7 @@ export default function EventPage() {
                 onDateToggle={handleDateToggle}
                 matchingDates={event.matchingDates}
                 participantSelections={participantSelections}
+                currentUserName={userName}
               />
 
               <button

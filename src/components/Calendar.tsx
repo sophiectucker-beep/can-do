@@ -65,7 +65,8 @@ export default function Calendar({
     const dateStr = format(day, 'yyyy-MM-dd');
     const voters: string[] = [];
     Object.entries(participantSelections).forEach(([name, dates]) => {
-      if (dates.includes(dateStr)) {
+      // Exclude current user - their selections are shown via selectedDates prop
+      if (dates.includes(dateStr) && name !== currentUserName) {
         voters.push(name);
       }
     });
