@@ -54,16 +54,9 @@ export default function Home() {
         >
           Can Do
         </h1>
-        <p className="text-[var(--text-light)] font-light mb-8">
+        <p className="text-[var(--text-light)] font-light mb-12">
           find the perfect date together
         </p>
-
-        {/* Social Proof */}
-        {eventCount !== null && eventCount > 0 && (
-          <p className="text-xs text-[var(--accent)] font-light mb-8 bg-[var(--pastel-pink)] px-4 py-2 rounded-full">
-            🎉 {eventCount.toLocaleString()} {eventCount === 1 ? 'event' : 'events'} created and counting!
-          </p>
-        )}
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6 w-full">
@@ -115,36 +108,12 @@ export default function Home() {
           </button>
         </form>
 
-        {/* How it works */}
-        <div className="mt-12 w-full">
-          <h2 className="text-sm font-medium text-[var(--text-light)] mb-6 text-center">How it works</h2>
-          <div className="grid grid-cols-4 gap-2 text-center">
-            <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full bg-[var(--pastel-pink)] flex items-center justify-center text-[var(--accent)] font-medium mb-2">
-                1
-              </div>
-              <p className="text-xs text-[var(--text-light)] font-light">Create event</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full bg-[var(--pastel-pink)] flex items-center justify-center text-[var(--accent)] font-medium mb-2">
-                2
-              </div>
-              <p className="text-xs text-[var(--text-light)] font-light">Share link</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full bg-[var(--pastel-pink)] flex items-center justify-center text-[var(--accent)] font-medium mb-2">
-                3
-              </div>
-              <p className="text-xs text-[var(--text-light)] font-light">Vote on dates</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full bg-[var(--pastel-pink)] flex items-center justify-center text-[var(--accent)] font-medium mb-2">
-                ✓
-              </div>
-              <p className="text-xs text-[var(--text-light)] font-light">Find the date!</p>
-            </div>
-          </div>
-        </div>
+        {/* Social Proof */}
+        {eventCount !== null && eventCount > 0 && (
+          <p className="text-xs text-white font-light mt-10 bg-[#7c9885] px-5 py-2.5 rounded-full shadow-sm">
+            🎉 {eventCount.toLocaleString()} {eventCount === 1 ? 'event' : 'events'} created and counting!
+          </p>
+        )}
       </div>
 
       {/* Footer */}

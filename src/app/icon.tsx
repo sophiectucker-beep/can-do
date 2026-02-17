@@ -11,20 +11,26 @@ export default function Icon() {
     (
       <div
         style={{
-          fontSize: 24,
-          background: "linear-gradient(135deg, #e89999 0%, #d48a8a 100%)",
+          background: "#fff5f5",
           width: "100%",
           height: "100%",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: "white",
           borderRadius: 6,
-          fontWeight: "bold",
-          fontFamily: "sans-serif",
         }}
       >
-        C
+        <span
+          style={{
+            fontSize: 26,
+            fontWeight: "bold",
+            color: "#e89999",
+            fontFamily: "Georgia, serif",
+            textShadow: "0 0 1px #d48a8a",
+          }}
+        >
+          C
+        </span>
       </div>
     ),
     {
