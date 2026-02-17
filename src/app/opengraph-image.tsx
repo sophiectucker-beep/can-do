@@ -1,8 +1,6 @@
 import { ImageResponse } from "next/og";
-import { readFile } from "fs/promises";
-import { join } from "path";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 export const alt = "Can Do - Find the Perfect Date Together";
 export const size = {
   width: 1200,
@@ -11,11 +9,6 @@ export const size = {
 export const contentType = "image/png";
 
 export default async function Image() {
-  // Read the logo file and convert to base64
-  const logoPath = join(process.cwd(), "public", "logo.png");
-  const logoData = await readFile(logoPath);
-  const logoBase64 = `data:image/png;base64,${logoData.toString("base64")}`;
-
   return new ImageResponse(
     (
       <div
@@ -27,24 +20,29 @@ export default async function Image() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          fontFamily: "sans-serif",
+          fontFamily: "Georgia, serif",
         }}
       >
-        {/* Logo */}
-        <img
-          src={logoBase64}
-          alt="Can Do"
+        {/* Logo text styled to match brand */}
+        <div
           style={{
-            height: 140,
+            fontSize: 120,
+            fontStyle: "italic",
+            fontWeight: 400,
+            color: "#d4a5a5",
             marginBottom: 20,
+            textShadow: "2px 2px 0 #c49393",
           }}
-        />
+        >
+          Can Do
+        </div>
         <div
           style={{
             fontSize: 40,
             color: "#666",
             fontWeight: 300,
             marginBottom: 50,
+            fontFamily: "sans-serif",
           }}
         >
           Find the perfect date together
@@ -55,6 +53,7 @@ export default async function Image() {
             gap: 40,
             fontSize: 26,
             color: "#666",
+            fontFamily: "sans-serif",
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -63,7 +62,6 @@ export default async function Image() {
               height="24"
               viewBox="0 0 24 24"
               fill="none"
-              style={{ color: "#7c9885" }}
             >
               <path
                 d="M5 13l4 4L19 7"
@@ -81,7 +79,6 @@ export default async function Image() {
               height="24"
               viewBox="0 0 24 24"
               fill="none"
-              style={{ color: "#7c9885" }}
             >
               <path
                 d="M5 13l4 4L19 7"
@@ -99,7 +96,6 @@ export default async function Image() {
               height="24"
               viewBox="0 0 24 24"
               fill="none"
-              style={{ color: "#7c9885" }}
             >
               <path
                 d="M5 13l4 4L19 7"
