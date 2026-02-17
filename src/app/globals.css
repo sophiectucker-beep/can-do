@@ -71,21 +71,31 @@ input::placeholder {
   position: relative;
 }
 
+.page-curl::before {
+  content: '';
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 70px 70px;
+  border-color: transparent transparent #f5e6e6 transparent;
+  filter: drop-shadow(-2px -2px 3px rgba(0, 0, 0, 0.08));
+  pointer-events: none;
+  z-index: 100;
+}
+
 .page-curl::after {
   content: '';
   position: fixed;
   bottom: 0;
   right: 0;
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(
-    225deg,
-    transparent 50%,
-    rgba(255, 212, 212, 0.3) 50%,
-    rgba(255, 212, 212, 0.5) 60%,
-    rgba(254, 247, 247, 1) 60%
-  );
-  box-shadow: -3px -3px 8px rgba(0, 0, 0, 0.05);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 70px 70px 0 0;
+  border-color: #fef7f7 transparent transparent transparent;
   pointer-events: none;
-  z-index: 100;
+  z-index: 101;
 }
