@@ -399,7 +399,10 @@ export default function EventPage() {
               </button>
               {selectedDates.length > 0 && (
                 <button
-                  onClick={() => setSelectedDates([])}
+                  onClick={() => {
+                    setSelectedDates([]);
+                    setHasUnsavedChanges(true);
+                  }}
                   className="w-full mt-2 text-sm text-[var(--text-light)] hover:text-[var(--accent)]
                              font-light underline underline-offset-2 transition-colors"
                 >
