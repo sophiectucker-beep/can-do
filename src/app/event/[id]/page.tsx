@@ -418,7 +418,7 @@ export default function EventPage() {
                   {/* Mobile share link - shown below dates */}
                   <button
                     onClick={copyShareLink}
-                    className="lg:hidden mt-4 text-sm text-[var(--pastel-purple)] hover:text-[var(--accent)]
+                    className="lg:hidden mt-4 text-sm text-[var(--accent)] hover:text-[var(--accent-hover)]
                                font-light underline underline-offset-2 block mx-auto transition-colors"
                   >
                     {copied ? 'Link copied!' : 'Share the link with friends!'}
@@ -433,7 +433,7 @@ export default function EventPage() {
                       {hasSaved ? (
                         <button
                           onClick={copyShareLink}
-                          className="text-[var(--pastel-purple)] hover:text-[var(--accent)]
+                          className="text-[var(--accent)] hover:text-[var(--accent-hover)]
                                      underline underline-offset-2 transition-colors"
                         >
                           {copied ? 'Link copied!' : 'Share the link with friends!'}
