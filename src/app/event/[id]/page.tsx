@@ -39,6 +39,7 @@ export default function EventPage() {
   const [editingTitle, setEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState('');
   const [editingName, setEditingName] = useState(false);
+  const [showSaveToast, setShowSaveToast] = useState(false);
   const weCanDoRef = useRef<HTMLDivElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -125,6 +126,10 @@ export default function EventPage() {
         setShowNamePrompt(false);
         setHasUnsavedChanges(false);
         setHasSaved(true);
+
+        // Show save confirmation toast
+        setShowSaveToast(true);
+        setTimeout(() => setShowSaveToast(false), 2500);
 
         // On mobile, scroll to "We can do" section after saving
         if (window.innerWidth < 1024 && weCanDoRef.current) {
@@ -531,6 +536,19 @@ export default function EventPage() {
               </svg>
             )}
           </button>
+        </div>
+      )}
+
+      {/* Save Confirmation Toast */}
+      {showSaveToast && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 animate-fade-in">
+          <div className="bg-[var(--pastel-green)] text-[var(--foreground)] px-6 py-3 rounded-full shadow-lg
+                          flex items-center gap-2 font-light">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            Dates saved!
+          </div>
         </div>
       )}
     </main>
