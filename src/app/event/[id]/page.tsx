@@ -403,23 +403,48 @@ export default function EventPage() {
               </h2>
 
               {event.matchingDates.length > 0 ? (
-                <ul className="space-y-2">
-                  {event.matchingDates.map(date => (
-                    <li
-                      key={date}
-                      className="px-4 py-3 bg-[var(--pastel-green)] rounded-xl
-                                 text-center font-light text-[var(--foreground)]"
-                    >
-                      {format(new Date(date), 'EEEE, MMM d')}
-                    </li>
-                  ))}
-                </ul>
+                <>
+                  <ul className="space-y-2">
+                    {event.matchingDates.map(date => (
+                      <li
+                        key={date}
+                        className="px-4 py-3 bg-[var(--pastel-green)] rounded-xl
+                                   text-center font-light text-[var(--foreground)]"
+                      >
+                        {format(new Date(date), 'EEEE, MMM d')}
+                      </li>
+                    ))}
+                  </ul>
+                  {/* Mobile share link - shown below dates */}
+                  <button
+                    onClick={copyShareLink}
+                    className="lg:hidden mt-4 text-sm text-[var(--pastel-purple)] hover:text-[var(--accent)]
+                               font-light underline underline-offset-2 block mx-auto transition-colors"
+                  >
+                    {copied ? 'Link copied!' : 'Share the link with friends!'}
+                  </button>
+                </>
               ) : (
                 <p className="text-sm text-[var(--text-light)] font-light text-center">
                   No matching dates yet.
-                  {event.participants.length < 2
-                    ? ' Share the link with friends!'
-                    : ' Select more dates to find overlap!'}
+                  {event.participants.length < 2 ? (
+                    <>
+                      {' '}
+                      {hasSaved ? (
+                        <button
+                          onClick={copyShareLink}
+                          className="text-[var(--pastel-purple)] hover:text-[var(--accent)]
+                                     underline underline-offset-2 transition-colors"
+                        >
+                          {copied ? 'Link copied!' : 'Share the link with friends!'}
+                        </button>
+                      ) : (
+                        'Share the link with friends!'
+                      )}
+                    </>
+                  ) : (
+                    ' Select more dates to find overlap!'
+                  )}
                 </p>
               )}
 
