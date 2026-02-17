@@ -1,0 +1,6 @@
+# robots.txt for cando.day
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://cando.day/sitemap.xml
