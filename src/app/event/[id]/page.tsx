@@ -397,6 +397,15 @@ export default function EventPage() {
               >
                 {isSaving ? 'Saving...' : 'Save My Dates'}
               </button>
+              {selectedDates.length > 0 && (
+                <button
+                  onClick={() => setSelectedDates([])}
+                  className="w-full mt-2 text-sm text-[var(--text-light)] hover:text-[var(--accent)]
+                             font-light underline underline-offset-2 transition-colors"
+                >
+                  Clear all
+                </button>
+              )}
             </div>
           </div>
 
