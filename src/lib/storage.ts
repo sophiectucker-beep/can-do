@@ -185,3 +185,14 @@ export function getMatchingDates(event: CalendarEvent): string[] {
     .map(([date]) => date)
     .sort();
 }
+
+export async function getEventCount(): Promise<number> {
+  try {
+    // Get all keys matching the event prefix
+    const keys = await redis.keys(`${EVENT_PREFIX}*`);
+    return keys.length;
+  } catch (error) {
+    console.error('Error counting events:', error);
+    return 0;
+  }
+}

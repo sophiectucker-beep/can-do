@@ -1,13 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [title, setTitle] = useState('');
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [eventCount, setEventCount] = useState<number | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    // Fetch event count for social proof
+    fetch('/api/stats')
+      .then(res => res.json())
+      .then(data => setEventCount(data.count))
+      .catch(() => setEventCount(null));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,8 +45,8 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center p-8">
-      <div className="w-full max-w-md text-center">
+    <main className="min-h-screen flex flex-col items-center justify-between p-8">
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-md">
         {/* Logo */}
         <h1
           className="text-6xl font-bold mb-2 text-[var(--accent)] relative inline-block"
@@ -45,12 +54,19 @@ export default function Home() {
         >
           Can Do
         </h1>
-        <p className="text-[var(--text-light)] font-light mb-12">
+        <p className="text-[var(--text-light)] font-light mb-8">
           find the perfect date together
         </p>
 
+        {/* Social Proof */}
+        {eventCount !== null && eventCount > 0 && (
+          <p className="text-xs text-[var(--accent)] font-light mb-8 bg-[var(--pastel-pink)] px-4 py-2 rounded-full">
+            🎉 {eventCount.toLocaleString()} {eventCount === 1 ? 'event' : 'events'} created and counting!
+          </p>
+        )}
+
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 w-full">
           <div>
             <input
               type="text"
@@ -85,14 +101,61 @@ export default function Home() {
                        transition-colors disabled:opacity-50 disabled:cursor-not-allowed
                        shadow-sm"
           >
-            {isLoading ? 'Creating...' : 'Create Calendar'}
+            {isLoading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                Creating...
+              </span>
+            ) : (
+              'Create Calendar'
+            )}
           </button>
         </form>
 
-        <p className="mt-8 text-xs text-[var(--text-light)] font-light">
-          Create a shared calendar and share the link with friends to find dates that work for everyone
-        </p>
+        {/* How it works */}
+        <div className="mt-12 w-full">
+          <h2 className="text-sm font-medium text-[var(--text-light)] mb-6 text-center">How it works</h2>
+          <div className="grid grid-cols-4 gap-2 text-center">
+            <div className="flex flex-col items-center">
+              <div className="w-10 h-10 rounded-full bg-[var(--pastel-pink)] flex items-center justify-center text-[var(--accent)] font-medium mb-2">
+                1
+              </div>
+              <p className="text-xs text-[var(--text-light)] font-light">Create event</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="w-10 h-10 rounded-full bg-[var(--pastel-pink)] flex items-center justify-center text-[var(--accent)] font-medium mb-2">
+                2
+              </div>
+              <p className="text-xs text-[var(--text-light)] font-light">Share link</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="w-10 h-10 rounded-full bg-[var(--pastel-pink)] flex items-center justify-center text-[var(--accent)] font-medium mb-2">
+                3
+              </div>
+              <p className="text-xs text-[var(--text-light)] font-light">Vote on dates</p>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="w-10 h-10 rounded-full bg-[var(--pastel-pink)] flex items-center justify-center text-[var(--accent)] font-medium mb-2">
+                ✓
+              </div>
+              <p className="text-xs text-[var(--text-light)] font-light">Find the date!</p>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Footer */}
+      <footer className="mt-12 text-center">
+        <p className="text-xs text-[var(--text-light)] font-light opacity-60">
+          Built after one too many &ldquo;when works for everyone?&rdquo; texts 💬
+        </p>
+        <p className="text-[10px] text-[var(--text-light)] font-light opacity-40 mt-1">
+          by SCT
+        </p>
+      </footer>
     </main>
   );
 }
