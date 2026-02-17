@@ -430,17 +430,13 @@ export default function EventPage() {
                   {event.participants.length < 2 ? (
                     <>
                       {' '}
-                      {hasSaved ? (
-                        <button
-                          onClick={copyShareLink}
-                          className="text-[var(--accent)] hover:text-[var(--accent-hover)]
-                                     underline underline-offset-2 transition-colors"
-                        >
-                          {copied ? 'Link copied!' : 'Share the link with friends!'}
-                        </button>
-                      ) : (
-                        'Share the link with friends!'
-                      )}
+                      <button
+                        onClick={copyShareLink}
+                        className="text-[var(--accent)] hover:text-[var(--accent-hover)]
+                                   underline underline-offset-2 transition-colors"
+                      >
+                        {copied ? 'Link copied!' : 'Share the link with friends!'}
+                      </button>
                     </>
                   ) : (
                     ' Select more dates to find overlap!'
