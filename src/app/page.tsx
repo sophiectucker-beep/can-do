@@ -121,17 +121,16 @@ export default function Home() {
             )}
           </button>
         </form>
-
-        {/* Social Proof */}
-        {eventCount !== null && eventCount > 0 && (
-          <p className="text-xs text-white font-light mt-10 bg-[#7c9885] px-5 py-2.5 rounded-full shadow-sm">
-            🎉 {eventCount.toLocaleString()} {eventCount === 1 ? 'event' : 'events'} created and counting!
-          </p>
-        )}
       </div>
 
       {/* Footer */}
       <footer className="mt-12 text-center">
+        {/* Social Proof */}
+        {eventCount !== null && eventCount > 0 && (
+          <p className="text-xs text-white font-light mb-4 bg-[#7c9885] px-5 py-2.5 rounded-full shadow-sm inline-block">
+            🎉 {eventCount.toLocaleString()} {eventCount === 1 ? 'event' : 'events'} created and counting!
+          </p>
+        )}
         <p className="text-xs text-[var(--text-light)] font-light opacity-60">
           {footerMessage}
         </p>
