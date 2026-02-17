@@ -423,10 +423,10 @@ export default function EventPage() {
                 </p>
               )}
 
-              {/* Participants */}
+              {/* Friends */}
               <div className="mt-6 pt-4 border-t border-[var(--pastel-pink)]">
                 <h3 className="text-sm font-light text-[var(--text-light)] mb-2">
-                  Participants ({event.participants.length})
+                  Friends ({event.participants.length})
                 </h3>
                 <ul className="space-y-1">
                   {event.participants.map(p => (
@@ -439,8 +439,20 @@ export default function EventPage() {
                       }`} />
                       {p.name} {p.isCreator && '(creator)'}
                       {p.id === visitorId && ' (you)'}
-                      <span className="text-[var(--text-light)]">
-                        ({p.selectedDates.length} dates)
+                      <span className="text-[var(--text-light)] relative group/dates cursor-help">
+                        ({p.selectedDates.length} {p.selectedDates.length === 1 ? 'date' : 'dates'})
+                        {p.selectedDates.length > 0 && (
+                          <span className="hidden group-hover/dates:block absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50
+                                          bg-white rounded-lg shadow-lg p-3 border border-[var(--pastel-pink)]
+                                          whitespace-nowrap pointer-events-none">
+                            <span className="text-[11px] text-[var(--foreground)] block">
+                              {p.selectedDates
+                                .sort()
+                                .map(d => format(new Date(d), 'MMM d'))
+                                .join(', ')}
+                            </span>
+                          </span>
+                        )}
                       </span>
                     </li>
                   ))}
