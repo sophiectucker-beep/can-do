@@ -58,6 +58,14 @@ export const metadata: Metadata = {
     title: "Can Do - Find the Perfect Date Together",
     description:
       "Create a shared calendar and find dates that work for everyone. Free group scheduling - no sign-up required.",
+    images: [
+      {
+        url: "https://cando.you/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Can Do - Find the Perfect Date Together",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
