@@ -19,8 +19,8 @@ const hankyDemo = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL("https://cando.you"),
   icons: {
-    icon: "/favicon.svg",
-    apple: "/favicon.svg",
+    icon: "/favicon.png",
+    apple: "/favicon.png",
   },
   title: {
     default: "Can Do - Find the Perfect Date Together",
