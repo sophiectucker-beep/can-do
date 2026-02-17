@@ -1,6 +1,8 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "fs/promises";
+import { join } from "path";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 export const alt = "Can Do - Find the Perfect Date Together";
 export const size = {
   width: 1200,
@@ -9,6 +11,11 @@ export const size = {
 export const contentType = "image/png";
 
 export default async function Image() {
+  // Read the logo file and convert to base64
+  const logoPath = join(process.cwd(), "public", "logo.png");
+  const logoData = await readFile(logoPath);
+  const logoBase64 = `data:image/png;base64,${logoData.toString("base64")}`;
+
   return new ImageResponse(
     (
       <div
@@ -23,23 +30,21 @@ export default async function Image() {
           fontFamily: "sans-serif",
         }}
       >
-        <div
+        {/* Logo */}
+        <img
+          src={logoBase64}
+          alt="Can Do"
           style={{
-            fontSize: 120,
-            fontWeight: "bold",
-            color: "#e89999",
+            height: 140,
             marginBottom: 20,
-            textShadow: "2px 2px 0 #d48a8a",
           }}
-        >
-          Can Do
-        </div>
+        />
         <div
           style={{
             fontSize: 40,
             color: "#666",
             fontWeight: 300,
-            marginBottom: 40,
+            marginBottom: 50,
           }}
         >
           Find the perfect date together
@@ -47,16 +52,65 @@ export default async function Image() {
         <div
           style={{
             display: "flex",
-            gap: 20,
-            fontSize: 24,
-            color: "#888",
+            gap: 40,
+            fontSize: 26,
+            color: "#666",
           }}
         >
-          <span>✓ Free</span>
-          <span>•</span>
-          <span>✓ No sign-up</span>
-          <span>•</span>
-          <span>✓ Share via link</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              style={{ color: "#7c9885" }}
+            >
+              <path
+                d="M5 13l4 4L19 7"
+                stroke="#7c9885"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span>Free</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              style={{ color: "#7c9885" }}
+            >
+              <path
+                d="M5 13l4 4L19 7"
+                stroke="#7c9885"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span>No sign-up</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              style={{ color: "#7c9885" }}
+            >
+              <path
+                d="M5 13l4 4L19 7"
+                stroke="#7c9885"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span>Share via link</span>
+          </div>
         </div>
       </div>
     ),
