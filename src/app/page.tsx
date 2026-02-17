@@ -63,12 +63,11 @@ export default function Home() {
     <main className="min-h-screen flex flex-col items-center justify-between p-8">
       <div className="flex-1 flex flex-col items-center justify-center w-full max-w-md">
         {/* Logo */}
-        <h1
-          className="text-6xl font-bold mb-2 text-[var(--accent)] relative inline-block"
-          style={{ fontFamily: 'var(--font-logo), sans-serif', textShadow: '0 0 0.02em #d48a8a' }}
-        >
-          Can Do
-        </h1>
+        <img
+          src="/logo.png"
+          alt="Can Do"
+          className="h-16 md:h-20 w-auto mb-2"
+        />
         <p className="text-[var(--text-light)] font-light mb-12">
           find the perfect date together
         </p>

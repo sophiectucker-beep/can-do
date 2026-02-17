@@ -238,12 +238,12 @@ export default function EventPage() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-4 lg:mb-8">
-          <a
-            href="/"
-            className="text-5xl font-bold text-[var(--accent)] hover:opacity-80 transition-opacity relative inline-block"
-            style={{ fontFamily: 'var(--font-logo), sans-serif', textShadow: '0 0 0.02em #d48a8a' }}
-          >
-            Can Do
+          <a href="/" className="inline-block hover:opacity-80 transition-opacity">
+            <img
+              src="/logo.png"
+              alt="Can Do"
+              className="h-12 md:h-14 w-auto mx-auto"
+            />
           </a>
         </div>
 
