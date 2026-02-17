@@ -3,11 +3,23 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
+const funnyFooters = [
+  "Built after one too many \"when works for everyone?\" texts 💬",
+  "Because group chats weren't chaotic enough already 🙃",
+  "For people who peaked at organising Google Docs 📋",
+  "Powered by the tears of failed WhatsApp polls 😭",
+  "Making \"let me check my calendar\" actually mean something 📅",
+  "Because herding cats is easier than herding friends 🐱",
+  "For when \"I'm free whenever\" means absolutely nothing 🤷‍♀️",
+  "Born from the ashes of 47 unread messages about brunch 🥂",
+];
+
 export default function Home() {
   const [title, setTitle] = useState('');
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [eventCount, setEventCount] = useState<number | null>(null);
+  const [footerMessage, setFooterMessage] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -16,6 +28,9 @@ export default function Home() {
       .then(res => res.json())
       .then(data => setEventCount(data.count))
       .catch(() => setEventCount(null));
+
+    // Pick a random footer message
+    setFooterMessage(funnyFooters[Math.floor(Math.random() * funnyFooters.length)]);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -89,8 +104,8 @@ export default function Home() {
           <button
             type="submit"
             disabled={!title.trim() || !name.trim() || isLoading}
-            className="w-full px-6 py-4 bg-[var(--accent)] hover:bg-[var(--accent-hover)]
-                       text-[var(--text-light)] hover:text-white font-light tracking-wide
+            className="w-full px-6 py-4 bg-[#d48a8a] hover:bg-[#c77b7b]
+                       text-white font-normal tracking-wide
                        transition-colors disabled:opacity-50 disabled:cursor-not-allowed
                        shadow-sm"
           >
@@ -119,7 +134,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="mt-12 text-center">
         <p className="text-xs text-[var(--text-light)] font-light opacity-60">
-          Built after one too many &ldquo;when works for everyone?&rdquo; texts 💬
+          {footerMessage}
         </p>
         <p className="text-[10px] text-[var(--text-light)] font-light opacity-40 mt-1">
           by SCT
