@@ -1,6 +1,8 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "fs/promises";
+import { join } from "path";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 export const alt = "Can Do - Find the Perfect Date Together";
 export const size = {
   width: 1200,
@@ -9,40 +11,40 @@ export const size = {
 export const contentType = "image/png";
 
 export default async function Image() {
+  // Read the transparent logo file and convert to base64
+  const logoPath = join(process.cwd(), "public", "logo-transparent.png");
+  const logoData = await readFile(logoPath);
+  const logoBase64 = `data:image/png;base64,${logoData.toString("base64")}`;
+
   return new ImageResponse(
     (
       <div
         style={{
-          background: "#FFFFFF",
+          background: "linear-gradient(135deg, #fff5f5 0%, #ffe0e6 100%)",
           width: "100%",
           height: "100%",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          fontFamily: "Georgia, serif",
+          fontFamily: "sans-serif",
         }}
       >
-        {/* Logo text styled to match brand */}
-        <div
+        {/* Transparent Logo */}
+        <img
+          src={logoBase64}
+          alt="Can Do"
           style={{
-            fontSize: 120,
-            fontStyle: "italic",
-            fontWeight: 400,
-            color: "#d4a5a5",
-            marginBottom: 20,
-            textShadow: "2px 2px 0 #c49393",
+            height: 160,
+            marginBottom: 30,
           }}
-        >
-          Can Do
-        </div>
+        />
         <div
           style={{
             fontSize: 40,
             color: "#666",
             fontWeight: 300,
             marginBottom: 50,
-            fontFamily: "sans-serif",
           }}
         >
           Find the perfect date together
@@ -53,7 +55,6 @@ export default async function Image() {
             gap: 40,
             fontSize: 26,
             color: "#666",
-            fontFamily: "sans-serif",
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
