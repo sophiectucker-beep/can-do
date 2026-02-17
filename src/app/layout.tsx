@@ -17,7 +17,7 @@ const hankyDemo = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://cando.day"),
+  metadataBase: new URL("https://cando.you"),
   title: {
     default: "Can Do - Find the Perfect Date Together",
     template: "%s | Can Do",
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://cando.day",
+    url: "https://cando.you",
     siteName: "Can Do",
     title: "Can Do - Find the Perfect Date Together",
     description:
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
       "Create a shared calendar and find dates that work for everyone. Free group scheduling - no sign-up required.",
   },
   alternates: {
-    canonical: "https://cando.day",
+    canonical: "https://cando.you",
   },
   category: "Productivity",
 };
@@ -76,7 +76,7 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   name: "Can Do",
-  url: "https://cando.day",
+  url: "https://cando.you",
   description:
     "Create a shared calendar and find dates that work for everyone. Free group scheduling tool - no sign-up required.",
   applicationCategory: "ProductivityApplication",
@@ -94,7 +94,7 @@ const jsonLd = {
     "Share via link",
     "Works on mobile and desktop",
   ],
-  screenshot: "https://cando.day/opengraph-image",
+  screenshot: "https://cando.you/opengraph-image",
   aggregateRating: {
     "@type": "AggregateRating",
     ratingValue: "5",
