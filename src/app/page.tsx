@@ -123,12 +123,20 @@ export default function Home() {
         </form>
       </div>
 
-      {/* Social Proof */}
-      {eventCount !== null && eventCount > 0 && (
-        <p className="text-xs text-white font-light mb-3 bg-[#7c9885] px-5 py-2.5 rounded-full shadow-sm">
-          🎉 {eventCount.toLocaleString()} {eventCount === 1 ? 'event' : 'events'} created and counting!
-        </p>
-      )}
+      {/* Social Proof & Suggest Feature */}
+      <div className="text-center mb-6">
+        {eventCount !== null && eventCount > 0 && (
+          <p className="text-xs text-white font-light mb-2 bg-[#7c9885] px-5 py-2.5 rounded-full shadow-sm inline-block">
+            🎉 {eventCount.toLocaleString()} {eventCount === 1 ? 'event' : 'events'} created and counting!
+          </p>
+        )}
+        <a
+          href="mailto:thecandoapp@gmail.com?subject=Feature Suggestion for Can Do"
+          className="text-[10px] text-[#c77b7b] font-light block hover:underline"
+        >
+          Suggest a feature 🗳️
+        </a>
+      </div>
 
       {/* Footer */}
       <footer className="text-center">
@@ -138,12 +146,6 @@ export default function Home() {
         <p className="text-[10px] text-[#c77b7b] font-light mt-1">
           by SCT
         </p>
-        <a
-          href="mailto:thecandoapp@gmail.com?subject=Feature Suggestion for Can Do"
-          className="text-[10px] text-[#c77b7b] font-light mt-1 inline-block hover:underline"
-        >
-          Suggest a feature 🗳️
-        </a>
       </footer>
     </main>
   );
