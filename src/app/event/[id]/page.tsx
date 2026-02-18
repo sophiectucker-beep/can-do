@@ -145,6 +145,43 @@ export default function EventPage() {
     }
   };
 
+  const clearAllDates = async () => {
+    if (!userName.trim()) {
+      setShowNamePrompt(true);
+      return;
+    }
+
+    setSelectedDates([]);
+    setIsSaving(true);
+    try {
+      localStorage.setItem(`can-do-${eventId}`, visitorId);
+
+      const response = await fetch(`/api/events/${eventId}/dates`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          visitorId,
+          name: userName.trim(),
+          dates: []
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setEvent(data);
+        setHasUnsavedChanges(false);
+        setHasSaved(true);
+
+        setShowSaveToast(true);
+        setTimeout(() => setShowSaveToast(false), 2500);
+      }
+    } catch (error) {
+      console.error('Error clearing dates:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const copyShareLink = () => {
     const url = window.location.href.split('?')[0]; // Remove any query params
     navigator.clipboard.writeText(url);
@@ -400,12 +437,10 @@ export default function EventPage() {
               </button>
               {selectedDates.length > 0 && (
                 <button
-                  onClick={() => {
-                    setSelectedDates([]);
-                    setHasUnsavedChanges(true);
-                  }}
+                  onClick={clearAllDates}
+                  disabled={isSaving}
                   className="w-full mt-2 text-sm text-[var(--text-light)] hover:text-[var(--accent)]
-                             font-light underline underline-offset-2 transition-colors"
+                             font-light underline underline-offset-2 transition-colors disabled:opacity-50"
                 >
                   Clear all
                 </button>
@@ -468,27 +503,24 @@ export default function EventPage() {
                   Friends ({event.participants.length})
                 </h3>
                 <ul className="space-y-1">
-                  {event.participants.map(p => {
-                    // For current user, show local selectedDates count (reflects unsaved changes like clear all)
-                    const displayDates = p.id === visitorId ? selectedDates : p.selectedDates;
-                    return (
+                  {event.participants.map(p => (
                     <li
                       key={p.id}
                       className="text-xs font-light text-[var(--foreground)] flex items-center gap-2"
                     >
                       <span className={`w-2 h-2 rounded-full ${
-                        displayDates.length > 0 ? 'bg-[var(--success)]' : 'bg-[var(--pastel-pink)]'
+                        p.selectedDates.length > 0 ? 'bg-[var(--success)]' : 'bg-[var(--pastel-pink)]'
                       }`} />
                       {p.name} {p.isCreator && '(creator)'}
                       {p.id === visitorId && ' (you)'}
                       <span className="text-[var(--text-light)] relative group/dates cursor-help">
-                        ({displayDates.length} {displayDates.length === 1 ? 'date' : 'dates'})
-                        {displayDates.length > 0 && (
+                        ({p.selectedDates.length} {p.selectedDates.length === 1 ? 'date' : 'dates'})
+                        {p.selectedDates.length > 0 && (
                           <span className="hidden group-hover/dates:block absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50
                                           bg-white rounded-lg shadow-lg p-3 border border-[var(--pastel-pink)]
                                           whitespace-nowrap pointer-events-none">
                             <span className="text-[11px] text-[var(--foreground)] block">
-                              {displayDates
+                              {p.selectedDates
                                 .sort()
                                 .map(d => format(new Date(d), 'MMM d'))
                                 .join(', ')}
@@ -497,8 +529,7 @@ export default function EventPage() {
                         )}
                       </span>
                     </li>
-                  );
-                  })}
+                  ))}
                 </ul>
               </div>
 
