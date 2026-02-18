@@ -186,6 +186,33 @@ export function getMatchingDates(event: CalendarEvent): string[] {
     .sort();
 }
 
+export async function deleteParticipant(
+  eventId: string,
+  requesterId: string,
+  participantIdToDelete: string
+): Promise<CalendarEvent | null> {
+  const event = await getEvent(eventId);
+  if (!event) return null;
+
+  // Only the creator can delete participants
+  const requester = event.participants.find(p => p.id === requesterId);
+  if (!requester?.isCreator) return null;
+
+  // Can't delete the creator
+  const participantToDelete = event.participants.find(p => p.id === participantIdToDelete);
+  if (!participantToDelete || participantToDelete.isCreator) return null;
+
+  // Remove the participant
+  event.participants = event.participants.filter(p => p.id !== participantIdToDelete);
+
+  const threeMonthsInSeconds = 90 * 24 * 60 * 60;
+  await redis.set(`${EVENT_PREFIX}${eventId}`, JSON.stringify(event), {
+    ex: threeMonthsInSeconds,
+  });
+
+  return event;
+}
+
 export async function getEventCount(): Promise<number> {
   try {
     // Get all keys matching the event prefix

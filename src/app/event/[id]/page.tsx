@@ -192,6 +192,28 @@ export default function EventPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const deleteParticipant = async (participantId: string) => {
+    if (!confirm('Remove this person from the event?')) return;
+
+    try {
+      const response = await fetch(`/api/events/${eventId}/participant`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          requesterId: visitorId,
+          participantId,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setEvent(data);
+      }
+    } catch (error) {
+      console.error('Error deleting participant:', error);
+    }
+  };
+
   const isCreator = event?.participants.some(p => p.id === visitorId && p.isCreator) ?? false;
 
   const startEditingTitle = () => {
@@ -521,26 +543,40 @@ export default function EventPage() {
                         key={p.id}
                         className="text-xs font-light text-[var(--foreground)] flex items-center gap-2"
                       >
-                        <span className={`w-2 h-2 rounded-full ${
+                        <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
                           displayCount > 0 ? 'bg-[var(--success)]' : 'bg-[var(--pastel-pink)]'
                         }`} />
-                        {p.name} {p.isCreator && '(creator)'}
-                        {isCurrentUser && ' (you)'}
-                        <span className="text-[var(--text-light)] relative group/dates cursor-help">
-                          ({displayCount} {displayCount === 1 ? 'date' : 'dates'})
-                          {displayDates.length > 0 && (
-                            <span className="hidden group-hover/dates:block absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50
-                                            bg-white rounded-lg shadow-lg p-3 border border-[var(--pastel-pink)]
-                                            whitespace-nowrap pointer-events-none">
-                              <span className="text-[11px] text-[var(--foreground)] block">
-                                {displayDates
-                                  .sort()
-                                  .map(d => format(new Date(d), 'MMM d'))
-                                  .join(', ')}
+                        <span className="flex-1">
+                          {p.name} {p.isCreator && '(creator)'}
+                          {isCurrentUser && ' (you)'}
+                          <span className="text-[var(--text-light)] relative group/dates cursor-help ml-1">
+                            ({displayCount} {displayCount === 1 ? 'date' : 'dates'})
+                            {displayDates.length > 0 && (
+                              <span className="hidden group-hover/dates:block absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50
+                                              bg-white rounded-lg shadow-lg p-3 border border-[var(--pastel-pink)]
+                                              whitespace-nowrap pointer-events-none">
+                                <span className="text-[11px] text-[var(--foreground)] block">
+                                  {displayDates
+                                    .sort()
+                                    .map(d => format(new Date(d), 'MMM d'))
+                                    .join(', ')}
+                                </span>
                               </span>
-                            </span>
-                          )}
+                            )}
+                          </span>
                         </span>
+                        {/* Delete button - only visible to creator, can't delete self */}
+                        {isCreator && !p.isCreator && (
+                          <button
+                            onClick={() => deleteParticipant(p.id)}
+                            className="text-[var(--text-light)] hover:text-[var(--accent)] transition-colors flex-shrink-0"
+                            title="Remove from event"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        )}
                       </li>
                     );
                   })}
