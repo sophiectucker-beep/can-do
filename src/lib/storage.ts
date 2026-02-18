@@ -188,9 +188,17 @@ export function getMatchingDates(event: CalendarEvent): string[] {
 
 export async function getEventCount(): Promise<number> {
   try {
-    // Get all keys matching the event prefix
-    const keys = await redis.keys(`${EVENT_PREFIX}*`);
-    return keys.length;
+    // Use scan to count all keys matching the event prefix
+    let count = 0;
+    let cursor = 0;
+
+    do {
+      const result = await redis.scan(cursor, { match: `${EVENT_PREFIX}*`, count: 100 });
+      cursor = result[0];
+      count += result[1].length;
+    } while (cursor !== 0);
+
+    return count;
   } catch (error) {
     console.error('Error counting events:', error);
     return 0;

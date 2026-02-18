@@ -135,7 +135,7 @@ export default function Home() {
         <p className="text-xs text-[var(--text-light)] font-light opacity-60">
           {footerMessage}
         </p>
-        <p className="text-[10px] text-[var(--text-light)] font-light opacity-40 mt-1">
+        <p className="text-[10px] text-[#c77b7b] font-light mt-1">
           by SCT
         </p>
       </footer>
