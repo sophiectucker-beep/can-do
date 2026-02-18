@@ -27,6 +27,7 @@ export default function EventPage() {
 
   const [event, setEvent] = useState<EventData | null>(null);
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
+  const [savedDatesCount, setSavedDatesCount] = useState<number | null>(null); // Only updates on save
   const [userName, setUserName] = useState('');
   const [visitorId, setVisitorId] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -126,6 +127,7 @@ export default function EventPage() {
         setShowNamePrompt(false);
         setHasUnsavedChanges(false);
         setHasSaved(true);
+        setSavedDatesCount(selectedDates.length); // Track saved count
 
         // Show save confirmation toast
         setShowSaveToast(true);
@@ -171,6 +173,7 @@ export default function EventPage() {
         setEvent(data);
         setHasUnsavedChanges(false);
         setHasSaved(true);
+        setSavedDatesCount(0); // Cleared = 0 dates
 
         setShowSaveToast(true);
         setTimeout(() => setShowSaveToast(false), 2500);
@@ -503,33 +506,44 @@ export default function EventPage() {
                   Friends ({event.participants.length})
                 </h3>
                 <ul className="space-y-1">
-                  {event.participants.map(p => (
-                    <li
-                      key={p.id}
-                      className="text-xs font-light text-[var(--foreground)] flex items-center gap-2"
-                    >
-                      <span className={`w-2 h-2 rounded-full ${
-                        p.selectedDates.length > 0 ? 'bg-[var(--success)]' : 'bg-[var(--pastel-pink)]'
-                      }`} />
-                      {p.name} {p.isCreator && '(creator)'}
-                      {p.id === visitorId && ' (you)'}
-                      <span className="text-[var(--text-light)] relative group/dates cursor-help">
-                        ({p.selectedDates.length} {p.selectedDates.length === 1 ? 'date' : 'dates'})
-                        {p.selectedDates.length > 0 && (
-                          <span className="hidden group-hover/dates:block absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50
-                                          bg-white rounded-lg shadow-lg p-3 border border-[var(--pastel-pink)]
-                                          whitespace-nowrap pointer-events-none">
-                            <span className="text-[11px] text-[var(--foreground)] block">
-                              {p.selectedDates
-                                .sort()
-                                .map(d => format(new Date(d), 'MMM d'))
-                                .join(', ')}
+                  {event.participants.map(p => {
+                    // For current user, use savedDatesCount if available (prevents live updates before saving)
+                    const isCurrentUser = p.id === visitorId;
+                    const displayCount = isCurrentUser && savedDatesCount !== null
+                      ? savedDatesCount
+                      : p.selectedDates.length;
+                    const displayDates = isCurrentUser && savedDatesCount !== null
+                      ? p.selectedDates.slice(0, savedDatesCount)
+                      : p.selectedDates;
+
+                    return (
+                      <li
+                        key={p.id}
+                        className="text-xs font-light text-[var(--foreground)] flex items-center gap-2"
+                      >
+                        <span className={`w-2 h-2 rounded-full ${
+                          displayCount > 0 ? 'bg-[var(--success)]' : 'bg-[var(--pastel-pink)]'
+                        }`} />
+                        {p.name} {p.isCreator && '(creator)'}
+                        {isCurrentUser && ' (you)'}
+                        <span className="text-[var(--text-light)] relative group/dates cursor-help">
+                          ({displayCount} {displayCount === 1 ? 'date' : 'dates'})
+                          {displayDates.length > 0 && (
+                            <span className="hidden group-hover/dates:block absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50
+                                            bg-white rounded-lg shadow-lg p-3 border border-[var(--pastel-pink)]
+                                            whitespace-nowrap pointer-events-none">
+                              <span className="text-[11px] text-[var(--foreground)] block">
+                                {displayDates
+                                  .sort()
+                                  .map(d => format(new Date(d), 'MMM d'))
+                                  .join(', ')}
+                              </span>
                             </span>
-                          </span>
-                        )}
-                      </span>
-                    </li>
-                  ))}
+                          )}
+                        </span>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
 
