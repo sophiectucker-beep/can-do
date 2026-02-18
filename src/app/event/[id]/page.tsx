@@ -411,12 +411,6 @@ export default function EventPage() {
                 </button>
               )}
             </div>
-            <a
-              href="mailto:thecandoapp@gmail.com?subject=Feature Suggestion for Can Do"
-              className="text-[10px] text-[#c77b7b] font-light mt-3 block text-center hover:underline"
-            >
-              Suggest a feature 🗳️
-            </a>
           </div>
 
           {/* Matching Dates Section */}
@@ -518,6 +512,12 @@ export default function EventPage() {
                 </button>
               </div>
             </div>
+            <a
+              href="mailto:thecandoapp@gmail.com?subject=Feature Suggestion for Can Do"
+              className="text-[10px] text-[#c77b7b] font-light mt-3 block text-center hover:underline"
+            >
+              Suggest a feature 🗳️
+            </a>
           </div>
         </div>
       </div>

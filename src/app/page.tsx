@@ -69,7 +69,7 @@ export default function Home() {
           className="h-16 md:h-20 w-auto mb-2"
         />
         <p className="text-[var(--text-light)] font-light mb-12">
-          🎯 find the perfect date together
+          🎯 Find the perfect date together
         </p>
 
         {/* Form */}
