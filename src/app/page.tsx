@@ -125,7 +125,7 @@ export default function Home() {
 
       {/* Social Proof */}
       {eventCount !== null && eventCount > 0 && (
-        <p className="text-xs text-white font-light mb-6 bg-[#7c9885] px-5 py-2.5 rounded-full shadow-sm">
+        <p className="text-xs text-white font-light mb-3 bg-[#7c9885] px-5 py-2.5 rounded-full shadow-sm">
           🎉 {eventCount.toLocaleString()} {eventCount === 1 ? 'event' : 'events'} created and counting!
         </p>
       )}
@@ -138,6 +138,12 @@ export default function Home() {
         <p className="text-[10px] text-[#c77b7b] font-light mt-1">
           by SCT
         </p>
+        <a
+          href="mailto:thecandoapp@gmail.com?subject=Feature Suggestion for Can Do"
+          className="text-[10px] text-[#c77b7b] font-light mt-1 inline-block hover:underline"
+        >
+          Suggest a feature 🗳️
+        </a>
       </footer>
     </main>
   );
