@@ -468,24 +468,27 @@ export default function EventPage() {
                   Friends ({event.participants.length})
                 </h3>
                 <ul className="space-y-1">
-                  {event.participants.map(p => (
+                  {event.participants.map(p => {
+                    // For current user, show local selectedDates count (reflects unsaved changes like clear all)
+                    const displayDates = p.id === visitorId ? selectedDates : p.selectedDates;
+                    return (
                     <li
                       key={p.id}
                       className="text-xs font-light text-[var(--foreground)] flex items-center gap-2"
                     >
                       <span className={`w-2 h-2 rounded-full ${
-                        p.selectedDates.length > 0 ? 'bg-[var(--success)]' : 'bg-[var(--pastel-pink)]'
+                        displayDates.length > 0 ? 'bg-[var(--success)]' : 'bg-[var(--pastel-pink)]'
                       }`} />
                       {p.name} {p.isCreator && '(creator)'}
                       {p.id === visitorId && ' (you)'}
                       <span className="text-[var(--text-light)] relative group/dates cursor-help">
-                        ({p.selectedDates.length} {p.selectedDates.length === 1 ? 'date' : 'dates'})
-                        {p.selectedDates.length > 0 && (
+                        ({displayDates.length} {displayDates.length === 1 ? 'date' : 'dates'})
+                        {displayDates.length > 0 && (
                           <span className="hidden group-hover/dates:block absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50
                                           bg-white rounded-lg shadow-lg p-3 border border-[var(--pastel-pink)]
                                           whitespace-nowrap pointer-events-none">
                             <span className="text-[11px] text-[var(--foreground)] block">
-                              {p.selectedDates
+                              {displayDates
                                 .sort()
                                 .map(d => format(new Date(d), 'MMM d'))
                                 .join(', ')}
@@ -494,7 +497,8 @@ export default function EventPage() {
                         )}
                       </span>
                     </li>
-                  ))}
+                  );
+                  })}
                 </ul>
               </div>
 

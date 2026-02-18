@@ -124,7 +124,7 @@ export default function Home() {
       </div>
 
       {/* Social Proof & Suggest Feature */}
-      <div className="text-center mb-6">
+      <div className="text-center mb-6" style={{ marginBottom: '106px' }}>
         {eventCount !== null && eventCount > 0 && (
           <p className="text-xs text-white font-light mb-2 bg-[#7c9885] px-5 py-2.5 rounded-full shadow-sm inline-block">
             🎉 {eventCount.toLocaleString()} {eventCount === 1 ? 'event' : 'events'} created and counting!
