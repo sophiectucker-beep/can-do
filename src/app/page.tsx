@@ -60,7 +60,13 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-between p-8">
+    <main className="min-h-screen flex flex-col items-center justify-between p-8 relative overflow-hidden">
+      {/* Page Curl Effect */}
+      <img
+        src="/page-curl.png"
+        alt=""
+        className="absolute bottom-0 right-0 w-32 md:w-48 pointer-events-none"
+      />
       <div className="flex-1 flex flex-col items-center justify-center w-full max-w-md">
         {/* Logo */}
         <img
