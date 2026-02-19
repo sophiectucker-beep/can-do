@@ -643,14 +643,14 @@ export default function EventPage() {
       {/* Save Confirmation Toast */}
       {showSaveToast && (
         <div className="fixed top-1/2 left-1/2 z-50 animate-toast-pop pointer-events-none">
-          <div className="flex items-center gap-4 text-5xl md:text-6xl"
+          <div className="flex items-center gap-2 md:gap-4 text-3xl md:text-6xl whitespace-nowrap"
                style={{
                  fontFamily: 'var(--font-logo)',
                  color: 'var(--foreground)',
                  textShadow: '0 4px 20px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.1)'
                }}>
             <span>🥂</span>
-            <span>Dates saved!</span>
+            <span>Dates Saved!</span>
           </div>
         </div>
       )}
