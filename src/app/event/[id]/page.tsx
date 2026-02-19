@@ -42,6 +42,7 @@ export default function EventPage() {
   const [editingName, setEditingName] = useState(false);
   const [showSaveToast, setShowSaveToast] = useState(false);
   const weCanDoRef = useRef<HTMLDivElement>(null);
+  const calendarRef = useRef<HTMLDivElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
 
@@ -435,8 +436,8 @@ export default function EventPage() {
 
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           {/* Calendar Section */}
-          <div className="flex-1">
-            <div className="bg-white/60 p-6 rounded-2xl shadow-sm">
+          <div className="flex-1" ref={calendarRef}>
+            <div className="bg-white/60 p-6 rounded-2xl shadow-sm relative">
               <h2 className="text-lg font-light text-center mb-4 text-[var(--foreground)]">
                 Select your available dates
               </h2>
@@ -641,8 +642,16 @@ export default function EventPage() {
       )}
 
       {/* Save Confirmation Toast */}
-      {showSaveToast && (
-        <div className="fixed top-1/2 left-1/2 z-50 animate-toast-pop pointer-events-none">
+      {showSaveToast && calendarRef.current && (
+        <div
+          className="fixed z-50 animate-toast-pop pointer-events-none"
+          style={{
+            top: `${calendarRef.current.getBoundingClientRect().top + calendarRef.current.getBoundingClientRect().height / 2}px`,
+            left: window.innerWidth >= 1024
+              ? `${calendarRef.current.getBoundingClientRect().left + calendarRef.current.getBoundingClientRect().width / 2}px`
+              : '50%',
+          }}
+        >
           <div className="flex items-center gap-2 md:gap-4 text-3xl md:text-6xl whitespace-nowrap"
                style={{
                  fontFamily: 'var(--font-logo)',
