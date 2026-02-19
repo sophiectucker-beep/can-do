@@ -174,9 +174,6 @@ export default function EventPage() {
         setHasUnsavedChanges(false);
         setHasSaved(true);
         setSavedDatesCount(0); // Cleared = 0 dates
-
-        setShowSaveToast(true);
-        setTimeout(() => setShowSaveToast(false), 2500);
       }
     } catch (error) {
       console.error('Error clearing dates:', error);
@@ -645,11 +642,15 @@ export default function EventPage() {
 
       {/* Save Confirmation Toast */}
       {showSaveToast && (
-        <div className="fixed top-1/2 left-1/2 z-50 animate-toast-pop">
-          <div className="bg-white text-[var(--foreground)] px-8 py-4 rounded-2xl shadow-2xl
-                          flex items-center gap-3 font-light text-lg">
-            <span className="text-2xl">🥂</span>
-            Dates saved!
+        <div className="fixed top-1/2 left-1/2 z-50 animate-toast-pop pointer-events-none">
+          <div className="flex items-center gap-4 text-5xl md:text-6xl"
+               style={{
+                 fontFamily: 'var(--font-logo)',
+                 color: 'var(--foreground)',
+                 textShadow: '0 4px 20px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.1)'
+               }}>
+            <span>🥂</span>
+            <span>Dates saved!</span>
           </div>
         </div>
       )}
