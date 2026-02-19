@@ -645,12 +645,10 @@ export default function EventPage() {
 
       {/* Save Confirmation Toast */}
       {showSaveToast && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 animate-fade-in">
-          <div className="bg-[var(--pastel-green)] text-[var(--foreground)] px-6 py-3 rounded-full shadow-lg
-                          flex items-center gap-2 font-light">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
+        <div className="fixed top-1/2 left-1/2 z-50 animate-toast-pop">
+          <div className="bg-white text-[var(--foreground)] px-8 py-4 rounded-2xl shadow-2xl
+                          flex items-center gap-3 font-light text-lg">
+            <span className="text-2xl">🥂</span>
             Dates saved!
           </div>
         </div>
