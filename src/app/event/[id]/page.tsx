@@ -212,8 +212,7 @@ export default function EventPage() {
 
   const openAppleCalendar = (dateStr: string) => {
     const calendarUrl = `${window.location.origin}/api/events/${eventId}/calendar?date=${encodeURIComponent(dateStr)}`;
-    const webcalUrl = calendarUrl.replace(/^https?/, 'webcal');
-    window.location.href = webcalUrl;
+    window.location.href = calendarUrl;
   };
 
   const openGoogleCalendar = (dateStr: string) => {
