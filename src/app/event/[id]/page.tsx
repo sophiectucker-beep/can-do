@@ -210,59 +210,16 @@ export default function EventPage() {
     return new Date(Date.UTC(year, month - 1, day));
   };
 
-  const toCalendarFilename = (dateStr: string) => {
-    const safeTitle = event?.title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '') || 'event';
-    return `can-do-${safeTitle}-${dateStr}.ics`;
-  };
+  const openAppleCalendar = (dateStr: string) => {
+    const calendarUrl = `${window.location.origin}/api/events/${eventId}/calendar?date=${encodeURIComponent(dateStr)}`;
 
-  const buildIcsContent = (dateStr: string) => {
-    const start = getUtcDateFromIso(dateStr);
-    const end = new Date(start);
-    end.setUTCDate(end.getUTCDate() + 1);
-    const startDate = formatCalendarDate(start);
-    const endDate = formatCalendarDate(end);
-    const stamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-    const eventUrl = window.location.href.split('?')[0];
+    if (isIosDevice) {
+      const webcalUrl = calendarUrl.replace(/^https?/, 'webcal');
+      window.location.href = webcalUrl;
+      return;
+    }
 
-    const escapeIcsText = (value: string) =>
-      value.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
-
-    const summary = escapeIcsText(event?.title || 'Can Do event');
-    const description = escapeIcsText(`Planned with Can Do: ${eventUrl}`);
-    const uid = `${eventId}-${dateStr}@can-do`;
-
-    return [
-      'BEGIN:VCALENDAR',
-      'VERSION:2.0',
-      'PRODID:-//Can Do//EN',
-      'CALSCALE:GREGORIAN',
-      'BEGIN:VEVENT',
-      `UID:${uid}`,
-      `DTSTAMP:${stamp}`,
-      `SUMMARY:${summary}`,
-      `DESCRIPTION:${description}`,
-      `DTSTART;VALUE=DATE:${startDate}`,
-      `DTEND;VALUE=DATE:${endDate}`,
-      'END:VEVENT',
-      'END:VCALENDAR',
-    ].join('\r\n');
-  };
-
-  const downloadAppleCalendarFile = (dateStr: string) => {
-    const ics = buildIcsContent(dateStr);
-    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = toCalendarFilename(dateStr);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    window.open(calendarUrl, '_blank', 'noopener,noreferrer');
   };
 
   const openGoogleCalendar = (dateStr: string) => {
@@ -585,7 +542,7 @@ export default function EventPage() {
                           {isIosDevice ? (
                             <>
                               <button
-                                onClick={() => downloadAppleCalendarFile(date)}
+                                onClick={() => openAppleCalendar(date)}
                                 className="px-2.5 py-1 text-[11px] rounded-lg bg-white/80 hover:bg-white transition-colors"
                               >
                                 Add to Apple Cal
@@ -606,7 +563,7 @@ export default function EventPage() {
                                 Add to Google Cal
                               </button>
                               <button
-                                onClick={() => downloadAppleCalendarFile(date)}
+                                onClick={() => openAppleCalendar(date)}
                                 className="px-2.5 py-1 text-[11px] rounded-lg bg-white/70 hover:bg-white transition-colors"
                               >
                                 Add to Apple Cal
