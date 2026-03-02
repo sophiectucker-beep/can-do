@@ -41,6 +41,7 @@ export default function EventPage() {
   const [editedTitle, setEditedTitle] = useState('');
   const [editingName, setEditingName] = useState(false);
   const [showSaveToast, setShowSaveToast] = useState(false);
+  const [isIosDevice, setIsIosDevice] = useState(false);
   const weCanDoRef = useRef<HTMLDivElement>(null);
   const calendarRef = useRef<HTMLDivElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
@@ -91,6 +92,13 @@ export default function EventPage() {
       return () => clearInterval(interval);
     }
   }, [fetchEvent, visitorId]);
+
+  useEffect(() => {
+    const ua = window.navigator.userAgent;
+    const isIos = /iPad|iPhone|iPod/.test(ua)
+      || (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1);
+    setIsIosDevice(isIos);
+  }, []);
 
   const handleDateToggle = (dateStr: string) => {
     setHasUnsavedChanges(true);
@@ -188,6 +196,91 @@ export default function EventPage() {
     navigator.clipboard.writeText(url);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const formatCalendarDate = (date: Date) => {
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    return `${year}${month}${day}`;
+  };
+
+  const getUtcDateFromIso = (dateStr: string) => {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(Date.UTC(year, month - 1, day));
+  };
+
+  const toCalendarFilename = (dateStr: string) => {
+    const safeTitle = event?.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '') || 'event';
+    return `can-do-${safeTitle}-${dateStr}.ics`;
+  };
+
+  const buildIcsContent = (dateStr: string) => {
+    const start = getUtcDateFromIso(dateStr);
+    const end = new Date(start);
+    end.setUTCDate(end.getUTCDate() + 1);
+    const startDate = formatCalendarDate(start);
+    const endDate = formatCalendarDate(end);
+    const stamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    const eventUrl = window.location.href.split('?')[0];
+
+    const escapeIcsText = (value: string) =>
+      value.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+
+    const summary = escapeIcsText(event?.title || 'Can Do event');
+    const description = escapeIcsText(`Planned with Can Do: ${eventUrl}`);
+    const uid = `${eventId}-${dateStr}@can-do`;
+
+    return [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Can Do//EN',
+      'CALSCALE:GREGORIAN',
+      'BEGIN:VEVENT',
+      `UID:${uid}`,
+      `DTSTAMP:${stamp}`,
+      `SUMMARY:${summary}`,
+      `DESCRIPTION:${description}`,
+      `DTSTART;VALUE=DATE:${startDate}`,
+      `DTEND;VALUE=DATE:${endDate}`,
+      'END:VEVENT',
+      'END:VCALENDAR',
+    ].join('\r\n');
+  };
+
+  const downloadAppleCalendarFile = (dateStr: string) => {
+    const ics = buildIcsContent(dateStr);
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = toCalendarFilename(dateStr);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const openGoogleCalendar = (dateStr: string) => {
+    const start = getUtcDateFromIso(dateStr);
+    const end = new Date(start);
+    end.setUTCDate(end.getUTCDate() + 1);
+    const startDate = formatCalendarDate(start);
+    const endDate = formatCalendarDate(end);
+    const eventUrl = window.location.href.split('?')[0];
+
+    const params = new URLSearchParams({
+      action: 'TEMPLATE',
+      text: event?.title || 'Can Do event',
+      dates: `${startDate}/${endDate}`,
+      details: `Planned with Can Do: ${eventUrl}`,
+    });
+
+    window.open(`https://calendar.google.com/calendar/render?${params.toString()}`, '_blank', 'noopener,noreferrer');
   };
 
   const deleteParticipant = async (participantId: string) => {
@@ -487,7 +580,40 @@ export default function EventPage() {
                         className="px-4 py-3 bg-[var(--pastel-green)] rounded-xl
                                    text-center font-light text-[var(--foreground)]"
                       >
-                        {format(new Date(date), 'EEEE, MMM d')}
+                        <p>{format(new Date(date), 'EEEE, MMM d')}</p>
+                        <div className="mt-2 flex flex-wrap justify-center gap-2">
+                          {isIosDevice ? (
+                            <>
+                              <button
+                                onClick={() => downloadAppleCalendarFile(date)}
+                                className="px-2.5 py-1 text-[11px] rounded-lg bg-white/80 hover:bg-white transition-colors"
+                              >
+                                Add to Apple Cal
+                              </button>
+                              <button
+                                onClick={() => openGoogleCalendar(date)}
+                                className="px-2.5 py-1 text-[11px] rounded-lg bg-white/70 hover:bg-white transition-colors"
+                              >
+                                Add to Google Cal
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() => openGoogleCalendar(date)}
+                                className="px-2.5 py-1 text-[11px] rounded-lg bg-white/80 hover:bg-white transition-colors"
+                              >
+                                Add to Google Cal
+                              </button>
+                              <button
+                                onClick={() => downloadAppleCalendarFile(date)}
+                                className="px-2.5 py-1 text-[11px] rounded-lg bg-white/70 hover:bg-white transition-colors"
+                              >
+                                Add to Apple Cal
+                              </button>
+                            </>
+                          )}
+                        </div>
                       </li>
                     ))}
                   </ul>
